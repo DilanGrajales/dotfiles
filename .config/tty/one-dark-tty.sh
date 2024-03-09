@@ -1,0 +1,21 @@
+if [ "$TERM" = "linux" ]; then
+	printf %b '\e[40m' '\e[8]' # set default background to color 0 'one-dark-bg'
+	printf %b '\e[37m' '\e[8]' # set default foreground to color 7 'one-dark-fg'
+	printf %b '\e]P0282c34'    # redefine 'black'          as 'one-dark-bg'
+	printf %b '\e]P86272a4'    # redefine 'bright-black'   as 'one-dark-comment'
+	printf %b '\e]P1e06c75'    # redefine 'red'            as 'one-dark-red'
+	printf %b '\e]P9f47166'    # redefine 'bright-red'     as '#f47166'
+	printf %b '\e]P23ab975'    # redefine 'green'          as 'one-dark-green'
+	printf %b '\e]PA98c379'    # redefine 'bright-green'   as '#98c379'
+	printf %b '\e]P3e5c07b'    # redefine 'brown'          as 'one-dark-yellow'
+	printf %b '\e]PBd19a66'    # redefine 'bright-brown'   as 'one-dark-orange'
+	printf %b '\e]P45e5e5e'    # redefine 'blue'           as 'one-dark-blue'
+	printf %b '\e]PC61afef'    # redefine 'bright-blue'    as '#61afef'
+	printf %b '\e]P5807373'    # redefine 'magenta'        as 'one-dark-purple'
+	printf %b '\e]PDc678dd'    # redefine 'bright-magenta' as '#c678dd'
+	printf %b '\e]P6959c9c'    # redefine 'cyan'           as 'one-dark-cyan'
+	printf %b '\e]PE56b6c2'    # redefine 'bright-cyan'    as '#56b6c2'
+	printf %b '\e]P7d4d4d4'    # redefine 'white'          as 'one-dark-fg'
+	printf %b '\e]PFabb2bf'    # redefine 'bright-white'   as '#abb2bf'
+	clear
+fi

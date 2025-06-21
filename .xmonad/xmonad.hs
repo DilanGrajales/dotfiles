@@ -119,11 +119,9 @@ myStartupHook :: X ()
 myStartupHook = do
     spawn "killall conky"   -- kill current conky on each restart
     spawn "greenclip daemon" -- start rofi-clipboard service
-    -- spawn "intel-undervolt apply" -- undervolt CPU
-    spawnOnce "xrandr --auto --output HDMI-1 --mode 1920x1080 -r 75 --right-of eDP-1"
+    -- spawnOnce "xrandr --auto --output HDMI-1 --mode 1920x1080 -r 75 --right-of eDP-1"
     spawnOnce "discord"
     spawnOnce "google-chrome-stable"
-    -- spawnOnce "lxsession"
     spawnOnce "picom &"
     spawnOnce "nm-applet"
     spawnOnce "volumeicon"
@@ -134,8 +132,6 @@ myStartupHook = do
 
     -- spawnOnce "xargs xwallpaper --stretch < ~/.cache/wall"
     spawnOnce "feh --bg-fill --no-fehbg /usr/share/backgrounds/big-sur-mountains.jpg"  -- set last saved feh wallpaper
-    -- spawnOnce "feh --randomize --bg-fill ~/wallpapers/*"  -- feh set random wallpaper
-    --spawnOnce "nitrogen --restore &"   -- if you prefer nitrogen to feh
     setWMName "LG3D"
 
 myColorizer :: Window -> Bool -> X (String, String)

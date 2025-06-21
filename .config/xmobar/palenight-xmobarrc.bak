@@ -1,10 +1,10 @@
--- Xmobar (http://projects.haskell.org/xmobar/)
+-- Xmobar (<http://projects.haskell.org/xmobar/>)
 -- This is one of the xmobar configurations for DTOS.
 -- This config is packaged in the DTOS repo as 'dtos-xmobar'
 -- Color scheme: Palenight
--- Dependencies: 
-   -- otf-font-awesome 
-   -- ttf-mononoki 
+-- Dependencies:
+   -- otf-font-awesome
+   -- ttf-mononoki
    -- ttf-ubuntu-font-family
    -- btop
    -- emacs
@@ -12,16 +12,15 @@
    -- trayer
    -- 'dtos-local-bin' (from dtos-core-repo)
 
--- Config { font            = "SF Pro Display SemiBold 9"
-Config { font            = "xft:SF Pro Display Semibold 8"
-       , additionalFonts = [ "Mononoki 9"
-                           , "Font Awesome 6 Free Solid 9"
-                           , "Font Awesome 6 Brands 9"
+Config { font            = "xft:SF Pro Display:wiight=semibold:pixelsize=11"
+       , additionalFonts = [ "xft:Mononoki:pixelsize=10"
+                           , "xft:Font Awesome 6 Free Solid:pixelsize=10"
+                           , "xft:Font Awesome 6 Brands:pixelsize=10"
                            ]
        -- , bgColor      = "#282a36"
-       , bgColor      = "#000000"
+       , bgColor      = "#2e3440"
        , fgColor      = "#f8f8f2"
-       , alpha	      = 0
+       , alpha       = 200
        -- Position TopSize and BottomSize take 3 arguments:
        --   an alignment parameter (L/R/C) for Left, Right or Center.
        --   an integer for the percentage width, so 100 would be 100%.

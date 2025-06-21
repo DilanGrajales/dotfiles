@@ -1,7 +1,7 @@
 -- Xmobar (<http://projects.haskell.org/xmobar/>)
 -- This is one of the xmobar configurations for DTOS.
 -- This config is packaged in the DTOS repo as 'dtos-xmobar'
--- Color scheme: Palenight
+-- Color scheme: OneDark
 -- Dependencies:
    -- otf-font-awesome
    -- ttf-mononoki
@@ -34,31 +34,31 @@ Config { font            = "SF Pro Display semibold 11"
        , iconRoot     = ".xmonad/xpm/"  -- default: "."
        , commands = [
                     -- Echos a "penguin" icon in front of the kernel output.
-                      Run Com "echo" ["<fc=#D55E65><fn=2>\xf0f3</fn></fc>"] "penguin" 3600
+                      Run Com "echo" ["<fc=#61AFEF><fn=2>\xf0f3</fn></fc>"] "penguin" 3600
                     -- Check for pacman updates (script found in .local/bin)
                     , Run Com ".local/bin/pacupdate" [] "pacupdate" 36000
                     -- Cpu usage in percent
-                    , Run Cpu ["-t", "<fc=#75D3A5><fn=2>\xf2db</fn></fc> <total>%","-H","50","--high","red"] 25
+                    , Run Cpu ["-t", "<fc=#61AFEF><fn=2>\xf2db</fn></fc> <total>%","-H","50","--high","red"] 25
                     -- Echos a "termometer" icon in front of the temperature output.
                     , Run MultiCoreTemp
                     [ "-hwmonitor-path", "/sys/module/k10temp/drivers/pci:k10temp/0000:00:18.3/hwmon/hwmon5"
-                    , "-t", "<fc=#E7C989><fn=2>\xf2c9</fn></fc> <avg>°C"
+                    , "-t", "<fc=#61AFEF><fn=2>\xf2c9</fn></fc> <avg>°C"
                     , "-H", "60", "--high", "red"
                     , "-L", "40", "--low", "green"
                     , "-n", "white", "-h", "red", "-l", "white"
                     ] 25
                     -- Ram used number and percent
-                    , Run Memory ["-t", "<fc=#6FA1E3><fn=2>\xf538</fn></fc> <usedratio>%"] 25
+                    , Run Memory ["-t", "<fc=#61AFEF><fn=2>\xf538</fn></fc> <usedratio>%"] 25
                     -- Disk space free
-                    , Run DiskU [("/", "<fc=#BE87E5><fn=2>\xf0a0</fn></fc> <usedp>%")] [] 3600
+                    , Run DiskU [("/", "<fc=#61AFEF><fn=2>\xf0a0</fn></fc> <usedp>%")] [] 3600
                     -- Brightness
-                    , Run Brightness [ "-t", "<fc=#71B7E0><fn=2>\xf185</fn></fc> <percent>%", "--", "-D", "intel_backlight" ] 1
+                    , Run Brightness [ "-t", "<fc=#61AFEF><fn=2>\xf185</fn></fc> <percent>%", "--", "-D", "intel_backlight" ] 1
                     -- Echos a "battery" icon in front of the pacman updates.
                     , Run Battery
                     [ "-t", "<acstatus> <left>"
                     , "--"
-                    , "-O", "<fc=#f07178><fn=2>\xf0e7</fn></fc>"
-                    , "-i", "<fc=#f07178><fn=2>\xf0e7</fn></fc>"
+                    , "-O", "<fc=#61AFEF><fn=2>\xf0e7</fn></fc>"
+                    , "-i", "<fc=#61AFEF><fn=2>\xf0e7</fn></fc>"
                     , "-o", ""
                     , "-L", "20", "-l", "red"
                     , "-H", "80", "-h", "green"
@@ -66,20 +66,20 @@ Config { font            = "SF Pro Display semibold 11"
                     , "-p", "green"  -- This appears to not work on some systems (Lenovo X1, Legion)
                     , "-f", "ACAD/online"  -- Specific to the Lenovo Legion series
                     , "-P"
-                    , "--lows", "<fc=#f07178><fn=2>\xf243</fn></fc>"
+                    , "--lows", "<fc=#e5c07b><fn=2>\xf243</fn></fc>"
                     , "--mediums", "<fc=#f07178><fn=2>\xf242</fn></fc>"
-                    , "--highs", "<fc=#f07178><fn=2>\xf240</fn></fc>"
+                    , "--highs", "<fc=#61AFEF><fn=2>\xf240</fn></fc>"
                     ] 25
                     -- Volume
                     , Run Volume "default" "Master"
                     [ "-t", "<status>", "--"
-                    , "--on", "<fc=#F4D03F><fn=2>\xf028</fn></fc> <volume>%"
+                    , "--on", "<fc=#61AFEF><fn=2>\xf028</fn></fc> <volume>%"
                     , "--onc", "#ffffff"
                     , "--off", "<fc=#EE4B2B><fn=2>\xf026</fn></fc> MUTE"
                     , "--offc", "#ffffff"
                     ] 1
                     -- Time and date
-                    , Run Date "<fc=#a3f7ff><fn=2>\xf783</fn></fc>  %b %d - %H:%M " "date" 50
+                    , Run Date "<fc=#61AFEF><fn=2>\xf783</fn></fc>  %b %d - %H:%M " "date" 50
                     -- Script that dynamically adjusts xmobar padding depending on number of trayer icons.
                     , Run Com ".config/xmobar/trayer-padding-icon.sh" [] "trayerpad" 20
                     -- Prints out the left side items such as workspaces, layout, etc.

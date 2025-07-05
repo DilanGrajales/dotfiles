@@ -69,22 +69,13 @@ import XMonad.Util.SpawnOnce
 
    -- ColorScheme module (SET ONLY ONE!)
       -- Possible choice are:
-      -- DoomOne
       -- Dracula
-      -- GruvboxDark
-      -- MonokaiPro
       -- Nord
-      -- OceanicNext
-      -- Palenight
-      -- SolarizedDark
-      -- SolarizedLight
-      -- TomorrowNight
--- import Colors.Dracula
--- import Colors.DoomOne
-import Colors.Palenight
+      -- OneDark
+import Colors.OneDark
 
 myFont :: String
-myFont = "xft:SF Mono:regular:size=10:antialias=true:hinting=true"
+myFont = "xft:SF Pro display:regular:size=10:antialias=true:hinting=true"
 -- createFontSet :: Display -> String -> IO ([String], String, FontSet)
 
 myModMask :: KeyMask
@@ -94,7 +85,7 @@ myTerminal :: String
 myTerminal = "kitty"    -- Sets default terminal
 
 myBrowser :: String
-myBrowser = "google-chrome-stable"  -- Sets google-chrome as browser
+myBrowser = "google-chrome-stable --force-device-scale-factor=1.5"  -- Sets google-chrome as browser
 
 -- myEmacs :: String
 -- myEmacs = "emacsclient -c -a 'emacs' "  -- Makes emacs keybindings easier to type
@@ -121,7 +112,7 @@ myStartupHook = do
     spawn "greenclip daemon" -- start rofi-clipboard service
     -- spawnOnce "xrandr --auto --output HDMI-1 --mode 1920x1080 -r 75 --right-of eDP-1"
     spawnOnce "discord"
-    spawnOnce "google-chrome-stable"
+    spawnOnce "google-chrome-stable --force-device-scale-factor=1.5"
     spawnOnce "picom &"
     spawnOnce "nm-applet"
     spawnOnce "volumeicon"
@@ -305,10 +296,10 @@ myTabTheme = def { fontName            = myFont
 -- Theme for showWName which prints current workspace when you change workspaces.
 myShowWNameTheme :: SWNConfig
 myShowWNameTheme = def
-    { swn_font              = "xft:SF Pro:bold:size=50"
-    , swn_fade              = 0.2
-    , swn_bgcolor           = "#1c1f24"
-    , swn_color             = "#ffffff"
+    { swn_font              = "xft:SF Mono:bold:size=60"
+    , swn_fade              = 0.3
+    , swn_bgcolor           = colorBack
+    , swn_color             = colorFore
     }
 
 -- The layout hook
@@ -328,7 +319,7 @@ myLayoutHook = avoidStruts $ mouseResize $ windowArrange $ T.toggleLayouts float
                                  ||| wideAccordion
 
 -- myWorkspaces = [" 1 ", " 2 ", " 3 ", " 4 ", " 5 ", " 6 ", " 7 ", " 8 ", " 9 "]
-myWorkspaces = [" DOC ", " WWW ", " DEV ", " TERM ", " DB ", " SYS ", " CHAT ", " GFX ", " SOUND "]
+myWorkspaces = [" DOC ", " WWW ", " DEV ", " TEST ", " DB ", " SYS ", " CHAT ", " GFX ", " MAIL "]
 myWorkspaceIndices = M.fromList $ zipWith (,) myWorkspaces [1..] -- (,) == \x y -> (x,y)
 
 clickable ws = "<action=xdotool key super+"++show i++">"++ws++"</action>"
@@ -529,11 +520,9 @@ myKeys =
         , ("<XF86AudioPlay>", spawn "mocp --play")
         , ("<XF86AudioPrev>", spawn "mocp --previous")
         , ("<XF86AudioNext>", spawn "mocp --next")
-        , ("<XF86AudioMute>", spawn "amixer set Master toggle")
-        , ("<XF86AudioLowerVolume>", spawn "amixer set Master 2%- unmute")
-        , ("<XF86AudioRaiseVolume>", spawn "amixer set Master 2%+ unmute")
-        , ("<XF86HomePage>", spawn "google-chrome-stable https://github.com/DilanGrajales")
-        , ("<XF86Search>", spawn "dm-websearch")
+        , ("<XF86AudioMute>", spawn "volumecontrol.sh m") -- Mute/Unmute audio
+        , ("<XF86AudioLowerVolume>", spawn "volumecontrol.sh i") -- Lower audio volume
+        , ("<XF86AudioRaiseVolume>", spawn "volumecontrol.sh d") -- Raise audio volume
         , ("<XF86Mail>", runOrRaise "thunderbird" (resource =? "thunderbird"))
         , ("<XF86Calculator>", runOrRaise "qalculate-gtk" (resource =? "qalculate-gtk"))
         , ("<XF86Eject>", spawn "toggleeject")

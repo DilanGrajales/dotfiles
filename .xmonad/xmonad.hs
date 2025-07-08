@@ -75,7 +75,7 @@ import XMonad.Util.SpawnOnce
 import Colors.OneDark
 
 myFont :: String
-myFont = "xft:SF Pro display:regular:size=10:antialias=true:hinting=true"
+myFont = "xft:SF Pro display:regular:size=11:antialias=true:hinting=true"
 -- createFontSet :: Display -> String -> IO ([String], String, FontSet)
 
 myModMask :: KeyMask
@@ -98,10 +98,10 @@ myBorderWidth :: Dimension
 myBorderWidth = 1           -- Sets border width for windows
 
 myNormColor :: String       -- Border color of normal windows
-myNormColor   = color05   -- This variable is imported from Colors.THEME
+myNormColor   = color01   -- This variable is imported from Colors.THEME
 
 myFocusColor :: String      -- Border color of focused windows
-myFocusColor  = color06     -- This variable is imported from Colors.THEME
+myFocusColor  = color04     -- This variable is imported from Colors.THEME
 
 windowCount :: X (Maybe String)
 windowCount = gets $ Just . show . length . W.integrate' . W.stack . W.workspace . W.current . windowset
@@ -116,13 +116,14 @@ myStartupHook = do
     spawnOnce "picom &"
     spawnOnce "nm-applet"
     spawnOnce "volumeicon"
+    spawnOnce "thunderbird"
     -- spawnOnce "/usr/bin/emacs --daemon" -- emacs daemon for the emacsclient
 
     -- spawn ("sleep 2 && conky -c $HOME/.config/conky/xmonad/" ++ colorScheme ++ "-01.conkyrc")
     -- spawn ("sleep 2 && trayer --edge top --align right --widthtype request --padding 6 --SetDockType true --SetPartialStrut true --expand true --monitor 1 --transparent true --alpha 0 " ++ colorTrayer ++ " --height 22")
 
     -- spawnOnce "xargs xwallpaper --stretch < ~/.cache/wall"
-    spawnOnce "feh --bg-fill --no-fehbg /usr/share/backgrounds/big-sur-mountains.jpg"  -- set last saved feh wallpaper
+    spawnOnce "feh --bg-fill --no-fehbg /usr/share/backgrounds/od_tux.png"  -- set last saved feh wallpaper
     setWMName "LG3D"
 
 myColorizer :: Window -> Bool -> X (String, String)
@@ -285,21 +286,21 @@ wideAccordion  = renamed [Replace "wideAccordion"]
 
 -- setting colors for tabs layout and tabs sublayout.
 myTabTheme = def { fontName            = myFont
-                 , activeColor         = color15
-                 , inactiveColor       = color08
-                 , activeBorderColor   = color15
+                 , activeColor         = color04
+                 , inactiveColor       = color05
+                 , activeBorderColor   = color04
                  , inactiveBorderColor = colorBack
-                 , activeTextColor     = colorBack
-                 , inactiveTextColor   = color16
+                 , activeTextColor     = color08
+                 , inactiveTextColor   = color05
                  }
 
 -- Theme for showWName which prints current workspace when you change workspaces.
 myShowWNameTheme :: SWNConfig
 myShowWNameTheme = def
-    { swn_font              = "xft:SF Mono:bold:size=60"
+    { swn_font              = "xft:SF Mono:Semibold:size=70"
     , swn_fade              = 0.3
     , swn_bgcolor           = colorBack
-    , swn_color             = colorFore
+    , swn_color             = color04
     }
 
 -- The layout hook
@@ -354,7 +355,7 @@ myManageHook = composeAll
      , className =? "google-chrome-stable"   --> doShift ( myWorkspaces !! 1 )
      , className =? "discord"         --> doShift ( myWorkspaces !! 6 )
      , title =? "Dbeaver" 	      --> doShift ( myWorkspaces !! 4 )
-     , title =? "Mailspring"          --> doShift ( myWorkspaces !! 7 )
+     , className =? "thunderbird"     --> doShift ( myWorkspaces !! 8 )
      , isFullscreen 		      -->  doFullFloat
      -- Development
      , title =? "Visual Studio Code"  --> doShift ( myWorkspaces !! 2 )
@@ -415,7 +416,7 @@ myKeys =
     -- KB_GROUP Useful programs to have a keybinding for launch
         , ("M-<Return>", spawn (myTerminal))
         , ("M-b", spawn (myBrowser))
-	, ("C-e", spawn "thunar")
+	, ("C-e", spawn "pcmanfm")
         , ("M-M1-h", spawn (myTerminal ++ "htop"))
 
     -- KB_GROUP Kill windows
@@ -463,8 +464,8 @@ myKeys =
     	, ("M-<XF86AudioPlay>", spawn "tidal-hifi")         -- Open Tidal HiFi
 
    -- Brightness
-    	, ("<XF86MonBrightnessUp>", spawn "brightnessctl set +2%") -- Brightness Up
-	, ("<XF86MonBrightnessDown>", spawn "brightnessctl set 2%-") -- Brightness Down
+    	, ("<XF86MonBrightnessUp>", spawn "brightnesscontrol.sh i") -- Brightness Up
+	, ("<XF86MonBrightnessDown>", spawn "brightnesscontrol.sh d") -- Brightness Down
 
     -- KB_GROUP Increase/decrease windows in the master pane or the stack
         , ("M-S-<Up>", sendMessage (IncMasterN 1))      -- Increase # of clients master pane
@@ -517,12 +518,12 @@ myKeys =
         -- , ("M-e a", spawn (myEmacs ++ ("--eval '(emms)' --eval '(emms-play-directory-tree \"~/Music/\")'")))
 
     -- KB_GROUP Multimedia Keys
-        , ("<XF86AudioPlay>", spawn "mocp --play")
-        , ("<XF86AudioPrev>", spawn "mocp --previous")
-        , ("<XF86AudioNext>", spawn "mocp --next")
-        , ("<XF86AudioMute>", spawn "volumecontrol.sh m") -- Mute/Unmute audio
-        , ("<XF86AudioLowerVolume>", spawn "volumecontrol.sh i") -- Lower audio volume
-        , ("<XF86AudioRaiseVolume>", spawn "volumecontrol.sh d") -- Raise audio volume
+        , ("<XF86AudioPlay>", spawn "tidal-cli playpause")
+        , ("<XF86AudioPrev>", spawn "tidal-cli previous")
+        , ("<XF86AudioNext>", spawn "tidal-cli next")
+        , ("<XF86AudioMute>", spawn "amixer set Master toggle") -- Mute/Unmute audio
+        , ("<XF86AudioLowerVolume>", spawn "volumecontrol.sh d") -- Lower audio volume
+        , ("<XF86AudioRaiseVolume>", spawn "volumecontrol.sh i") -- Raise audio volume
         , ("<XF86Mail>", runOrRaise "thunderbird" (resource =? "thunderbird"))
         , ("<XF86Calculator>", runOrRaise "qalculate-gtk" (resource =? "qalculate-gtk"))
         , ("<XF86Eject>", spawn "toggleeject")
@@ -567,19 +568,19 @@ main = do
                               >> hPutStrLn xmproc1 x   -- xmobar on monitor 2
                               -- >> hPutStrLn xmproc2 x   -- xmobar on monitor 3
                 -- Current workspace
-              , ppCurrent = xmobarColor color06 "" . wrap "[" "]"
+              , ppCurrent = xmobarColor color04 "" . wrap "[" "]"
                 -- Visible but not current workspace
-              , ppVisible = xmobarColor color05 "" . clickable
+              , ppVisible = xmobarColor color09 "" . clickable
                 -- Hidden workspace
               , ppHidden = xmobarColor color08 "" . clickable
                 -- Hidden workspaces (no windows)
               , ppHiddenNoWindows = xmobarColor color09 ""  . clickable
                 -- Title of active window
-              , ppTitle = xmobarColor color16 "" . shorten 60
+              , ppTitle = xmobarColor colorFore "" . shorten 60
                 -- Separator character
-              , ppSep =  "<fc=" ++ color06 ++ "> <fn=1>|</fn> </fc>"
+              , ppSep =  "<fc=" ++ colorFore ++ "> <fn=1>|</fn> </fc>"
                 -- Urgent workspace
-              , ppUrgent = xmobarColor color06 "" . wrap "!" "!"
+              , ppUrgent = xmobarColor color08 "" . wrap "!" "!"
                 -- Adding # of windows on current workspace to the bar
               -- , ppExtras  = [windowCount]
                 -- order of things in xmobar

@@ -1,0 +1,13 @@
+#!/bin/sh
+
+echo "Fixing Lofree Fn Mode"
+echo
+echo "Please switch keyboard into the MacOS/iOS mode: Press Fn + M"
+echo 
+read -p "Press any key to continue... " PRESSKEY
+echo
+echo "Setting Lofree Fn Mode to 2"
+echo 2 | sudo tee /sys/module/hid_apple/parameters/fnmode
+echo "Done!"
+echo
+echo "You can set keyboard back to Windows/Android/Linux mode by pressing Fn + N"

@@ -1,8 +1,8 @@
-$ ghc --make xmonad.hs -i -ilib -fforce-recomp -main-is main -dynamic -v0 -outputdir /home/dilan/.xmonad/build-x86_64-linux -o /home/dilan/.xmonad/xmonad-x86_64-linux
+$ ghc --make xmonad.hs -i -ilib -fforce-recomp -main-is main -dynamic -v0 -outputdir /home/dilangrajales/.xmonad/build-x86_64-linux -o /home/dilangrajales/.xmonad/xmonad-x86_64-linux
 
-xmonad.hs:382:5: warning: [-Wtabs]
-    Tab character found here, and in six further locations.
-    Please use spaces instead.
+xmonad.hs:354:31: warning: [-Wtabs]
+    Tab character found here, and in 39 further locations.
+    Suggested fix: Please use spaces instead.
     |
-382 |         , ("M-S-v", spawn "rofi -modi 'clipboard:greenclip print' -show clipboard -run-command '{cmd}'") -- print clipboard history
-    |     ^^^^
+354 |      , title =? "AnyDesk Chat"        --> doCenterFloat
+    |                               ^^

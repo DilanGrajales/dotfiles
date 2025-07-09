@@ -175,7 +175,7 @@
     max_icon_size = 64
 
     # Paths to default icons.
-    icon_path = /home/dilan/.local/share/icons/dunst
+    icon_path = /home/${USER}/.local/share/icons/dunst
 
     ### History ###
 

@@ -144,5 +144,5 @@ Config
   , sepChar = "%"
   , alignSep = "}{"
   , template =
-      " <action=`rofi -show p -modi p:rofi-power-menu`><icon=haskell_20.xpm/></action>  <fc=#abb2bf>|</fc> %UnsafeStdinReader% }{<action=`tidal-cli playpause`>%nowplaying%</action>   <action=`kitty -e sudo pacman -Syu`>%penguin% %pacupdate%</action>   <action=`kitty -e btop`>%cpu%</action>   <action=`kitty -e watch sensors`>%multicoretemp%</action>   <action=`kitty -e btop`>%memory%</action>   <action=`thunar`>%disku%</action>   %bright%   %battery%   <action=pavucontrol>%default:Master%</action>   <action=`emacsclient -c -a 'emacs' --eval '(doom/window-maximize-buffer(dt/year-calendar))'`>%date%</action> %trayerpad%"
+      " <action=`rofi -show p -modi p:rofi-power-menu`><icon=haskell_20.xpm/></action>  <fc=#abb2bf>|</fc> %UnsafeStdinReader% }{<action=`tidal-cli playpause`>%nowplaying%</action>   <action=`kitty -e sudo pacman -Syu`>%penguin% %pacupdate%</action>   <action=`kitty -e btop`>%cpu%</action>   <action=`kitty -e watch sensors`>%multicoretemp%</action>   <action=`kitty -e btop`>%memory%</action>   <action=`thunar`>%disku%</action>   %bright%   %battery%   <action=pavucontrol>%default:Master%</action>   <action=`yad --calendar --undecorated --fixed --close-on-unfocus --no-buttons`>%date%</action> %trayerpad%"
   }

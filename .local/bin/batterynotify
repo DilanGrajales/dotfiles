@@ -1,6 +1,6 @@
 #!/bin/sh
 
-export XAUTHORITY=/home/dilan/.Xauthority
+export XAUTHORITY=/home/${USER}/.Xauthority
 export DISPLAY=:0
 export DBUS_SESSION_BUS_ADDRESS="unix:path=/run/user/1000/bus"
 

@@ -584,7 +584,7 @@ main = do
                 -- Adding # of windows on current workspace to the bar
               -- , ppExtras  = [windowCount]
                 -- order of things in xmobar
-              , ppOrder  = \(ws:l:t:ex) -> [ws,l]++ex++[t]
+              , ppOrder  = \(ws:l:t:_) -> [ws,l,t]
               }
         } `additionalKeysP` myKeys
 

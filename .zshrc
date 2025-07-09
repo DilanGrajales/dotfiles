@@ -23,12 +23,6 @@ source /usr/share/zsh-sudo/sudo.plugin.zsh
 
 # Alias
 alias run="python manage.py runserver"
-alias tracking="cd /home/dilan/Documentos/Projects/tracking-crm && source env/bin/activate && export GOOGLE_APPLICATION_CREDENTIALS=google-key.json"
-alias microimport="cd /home/Microanalisis/microimport"
-alias cenpos="cd /home/dilan/Documentos/Projects/app.cenpos && source env/bin/activate"
-alias cadena="cd /home/Microanalisis/coc"
-alias iluminacion="cd /home/Microanalisis/iluminacion"
-alias secret="python ~/secretKeysGen.py"
 alias icat="kitten icat"
 alias venv="source env/bin/activate"
 alias ssdhealth="sudo smartctl -A /dev/nvme0n1"
@@ -42,7 +36,7 @@ source /usr/share/nvm/init-nvm.sh
 autoload -U add-zsh-hook
 
 # Tyy colors
-source /home/dilan/.config/tty/one-dark-tty.sh
+source /home/${USER}/.config/tty/one-dark-tty.sh
 
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
@@ -69,7 +63,7 @@ load-nvmrc() {
 add-zsh-hook chpwd load-nvmrc
 
 # pnpm
-export PNPM_HOME="/home/dilan/.local/share/pnpm"
+export PNPM_HOME="/home/${USER}/.local/share/pnpm"
 case ":$PATH:" in
   *":$PNPM_HOME:"*) ;;
   *) export PATH="$PNPM_HOME:$PATH" ;;

@@ -1,0 +1,21 @@
+#!/bin/bash
+
+# --- Configuración ---
+DEVICE_ADDRESS="D7:55:58:D2:1D:5C"
+DEVICE_NAME="Flow84@Lofree"
+
+# --- Lógica de Conexión ---
+echo "Intentando conectar con $DEVICE_NAME ($DEVICE_ADDRESS)..."
+echo -e "connect $DEVICE_ADDRESS\nexit" | bluetoothctl > /dev/null
+
+# Pequeña pausa para dar tiempo a que se establezca la conexión
+sleep 3
+
+# --- Verificación y Notificación ---
+if bluetoothctl info $DEVICE_ADDRESS | grep -q "Connected: yes"; then
+    # Notificación de Éxito
+    notify-send "Conexión Establecida" "El dispositivo <b>$DEVICE_NAME</b> se ha conectado correctamente." -i bluetooth -t 3000
+else
+    # Notificación de Falla
+    notify-send -u critical "Fallo de Conexión" "No se pudo conectar con <b>$DEVICE_NAME</b>." -i bluetooth-disabled -t 5000
+fi

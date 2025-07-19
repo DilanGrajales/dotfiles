@@ -110,13 +110,15 @@ myStartupHook :: X ()
 myStartupHook = do
     spawn "killall conky"   -- kill current conky on each restart
     spawn "greenclip daemon" -- start rofi-clipboard service
-    -- spawnOnce "xrandr --auto --output HDMI-1 --mode 1920x1080 -r 75 --right-of eDP-1"
+    --spawnOnce "xrandr --auto --output DP-1 --mode 3840x2160 -r 60 --above eDP-1"
+    spawnOnce "sh ~/.screenlayout/single_external_monitor.sh"
     spawnOnce "discord"
     spawnOnce "google-chrome-stable --force-device-scale-factor=1.5"
     spawnOnce "picom &"
     spawnOnce "nm-applet"
     spawnOnce "volumeicon"
     spawnOnce "thunderbird"
+    spawnOnce "tidal-hifi"
     -- spawnOnce "/usr/bin/emacs --daemon" -- emacs daemon for the emacsclient
 
     -- spawn ("sleep 2 && conky -c $HOME/.config/conky/xmonad/" ++ colorScheme ++ "-01.conkyrc")
@@ -354,6 +356,7 @@ myManageHook = composeAll
      , title =? "AnyDesk Chat"	      --> doCenterFloat
      , className =? "google-chrome-stable"   --> doShift ( myWorkspaces !! 1 )
      , className =? "discord"         --> doShift ( myWorkspaces !! 6 )
+     , className =? "tidal-hifi"     --> doShift ( myWorkspaces !! 6 )
      , title =? "Dbeaver" 	      --> doShift ( myWorkspaces !! 4 )
      , className =? "thunderbird"     --> doShift ( myWorkspaces !! 8 )
      , isFullscreen 		      -->  doFullFloat
@@ -462,6 +465,8 @@ myKeys =
 
    -- KB_GROUP Custom
     	, ("M-<XF86AudioPlay>", spawn "tidal-hifi")         -- Open Tidal HiFi
+    	, ("<XF86Calculator>", spawn "rofi -show calc")     -- Open Calc
+	, ("<XF86ScreenSaver>", spawn "betterlockscreen -l dimblur")
 
    -- Brightness
     	, ("<XF86MonBrightnessUp>", spawn "brightnesscontrol.sh i") -- Brightness Up
@@ -570,7 +575,7 @@ main = do
                 -- Current workspace
               , ppCurrent = xmobarColor color04 "" . wrap "[" "]"
                 -- Visible but not current workspace
-              , ppVisible = xmobarColor color09 "" . clickable
+              , ppVisible = xmobarColor color04 "" . clickable
                 -- Hidden workspace
               , ppHidden = xmobarColor color08 "" . clickable
                 -- Hidden workspaces (no windows)

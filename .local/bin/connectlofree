@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # --- Configuración ---
-DEVICE_ADDRESS="D7:55:58:D2:1D:5C"
+DEVICE_ADDRESS="FA:99:C5:3C:3D:78"
 DEVICE_NAME="Flow84@Lofree"
 
 # --- Lógica de Conexión ---

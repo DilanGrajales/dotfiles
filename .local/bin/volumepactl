@@ -1,0 +1,99 @@
+#!/usr/bin/env bash
+
+# --- Funciones de Ayuda ---
+print_usage() {
+  cat <<EOF
+Usage: $(basename "$0") <action> [step]
+
+Actions:
+    i     <i>ncrease volume [+5%]
+    d     <d>ecrease volume [-5%]
+    m     toggle <m>ute
+
+Optional:
+    step  volume change step [default: 5]
+
+Examples:
+    $(basename "${0}") i 10    # Increase volume by 10%
+    $(basename "${0}") m       # Toggle mute
+EOF
+  exit 1
+}
+
+# --- Funciones de PulseAudio (pactl) ---
+get_volume() {
+  pactl get-sink-volume @DEFAULT_SINK@ | grep -Po '\d+(?=%)' | head -1
+}
+
+get_mute() {
+  pactl get-sink-mute @DEFAULT_SINK@ | grep -q 'yes' && echo "true" || echo "false"
+}
+
+notify_user() {
+  local vol
+  vol=$(get_volume)
+  local mute_status
+  mute_status=$(get_mute)
+  local icon=""
+  local text=""
+
+  if [[ "$mute_status" == "true" ]]; then
+    icon="muted"
+    text="Volume (Muted)"
+  else
+    # Lógica para seleccionar el ícono de volumen
+    if (( vol >= 66 )); then
+      icon="volume-3"
+    elif (( vol >= 33 )); then
+      icon="volume-2"
+    elif (( vol > 0 )); then
+      icon="volume-1"
+    else
+      icon="volume-0"
+    fi
+    text="Volume"
+  fi
+
+  # Enviar la notificación
+  notify-send -a "volumecontrol" -r 2 -t 800 \
+    -h int:value:"$vol" \
+    -i "${icodir}/${icon}.svg" \
+    "$text" "$vol%"
+}
+
+# --- Acciones Principales ---
+change_volume() {
+    local sign="$1"
+    local current_vol
+    current_vol=$(get_volume)
+
+    if [[ "$sign" == "+" ]]; then
+        # Si el volumen actual ya es 100, no hagas nada, solo notifica.
+        if (( current_vol >= 100 )); then
+            pactl set-sink-volume @DEFAULT_SINK@ 100%
+        else
+            pactl set-sink-volume @DEFAULT_SINK@ "+${step}%"
+        fi
+    else
+        pactl set-sink-volume @DEFAULT_SINK@ "-${step}%"
+    fi
+
+    notify_user
+}
+
+
+toggle_mute() {
+  pactl set-sink-mute @DEFAULT_SINK@ toggle
+  notify_user
+}
+
+# --- Ejecución ---
+step="${2:-5}" # Por defecto, el paso es 5%
+icodir="$HOME/.config/dunst/icons" # Asegúrate de que esta ruta sea correcta
+
+case $1 in
+  i) change_volume "+" ;;
+  d) change_volume "-" ;;
+  m) toggle_mute ;;
+  *) print_usage ;;
+esac

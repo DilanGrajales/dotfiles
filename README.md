@@ -137,6 +137,34 @@ Mueve las carpetas correspondientes
 
     Ve a `kvantummanager` y selecciona el tema
 
+## Opciones de energia
+
+### Usar solo monitor con tapa cerrada
+
+#### Configurar servicio
+
+1. Abre las opciones de inicio
+
+    ```zsh
+    sudo nano /etc/systemd/logind.conf
+    ```
+
+2. Modifica la directiva de cierre de tapa
+
+    ```plaintext
+    ...
+    #HandleLidSwitchDocked=suspend -- antes
+
+    HandleLidSwitchDocked=ignore -- despues
+    ...
+    ```
+
+3. Reinicia el servicio
+
+    ```zsh
+    sudo systemctl restart systemd-logind.service
+    ```
+
 ## Personalización
 
 - Modifica los archivos en `.xmonad/` para cambiar atajos, apariencia y comportamiento.

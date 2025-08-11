@@ -112,12 +112,12 @@ myStartupHook = do
     spawn "greenclip daemon" -- start rofi-clipboard service
     --spawnOnce "xrandr --auto --output DP-1 --mode 3840x2160 -r 60 --above eDP-1"
     spawnOnce "sh ~/.screenlayout/single_external_monitor.sh"
-    spawnOnce "discord"
+    -- spawnOnce "discord"
     spawnOnce "google-chrome-stable --force-device-scale-factor=1.5"
     spawnOnce "picom &"
     spawnOnce "nm-applet"
     spawnOnce "volumeicon"
-    spawnOnce "thunderbird"
+    -- spawnOnce "thunderbird"
     spawnOnce "tidal-hifi"
     -- spawnOnce "/usr/bin/emacs --daemon" -- emacs daemon for the emacsclient
 
@@ -354,6 +354,7 @@ myManageHook = composeAll
      , title =? "Pomatez"             --> doFloat
      , className =? "Yad"             --> doCenterFloat
      , title =? "AnyDesk Chat"	      --> doCenterFloat
+     , title =? "Acceso: Cuentas de Google - Google Chrome"	      --> doCenterFloat
      , className =? "google-chrome-stable"   --> doShift ( myWorkspaces !! 1 )
      , className =? "discord"         --> doShift ( myWorkspaces !! 6 )
      , className =? "tidal-hifi"     --> doShift ( myWorkspaces !! 6 )
@@ -526,18 +527,19 @@ myKeys =
         , ("<XF86AudioPlay>", spawn "tidal-cli playpause")
         , ("<XF86AudioPrev>", spawn "tidal-cli previous")
         , ("<XF86AudioNext>", spawn "tidal-cli next")
-        , ("<XF86AudioMute>", spawn "amixer set Master toggle") -- Mute/Unmute audio
-        , ("<XF86AudioLowerVolume>", spawn "volumecontrol.sh d") -- Lower audio volume
-        , ("<XF86AudioRaiseVolume>", spawn "volumecontrol.sh i") -- Raise audio volume
+        -- , ("<XF86AudioMute>", spawn "amixer set Master toggle") -- Mute/Unmute audio
+        , ("<XF86AudioMute>", spawn "volumepactl m") -- Mute/Unmute audio
+        , ("<XF86AudioLowerVolume>", spawn "volumepactl d") -- Lower audio volume
+        , ("<XF86AudioRaiseVolume>", spawn "volumepactl i") -- Raise audio volume
         , ("<XF86Mail>", runOrRaise "thunderbird" (resource =? "thunderbird"))
         , ("<XF86Calculator>", runOrRaise "qalculate-gtk" (resource =? "qalculate-gtk"))
         , ("<XF86Eject>", spawn "toggleeject")
     -- Entire display screnshot 
-	, ("<Print>", spawn "scrot Imágenes/Screenshots/screen_%m-%d-%Y_%H-%M-%S.png -d 1 -e 'xclip -selection clipboard -t image/png -i $f'")
+	, ("<Print>", spawn "scrot Imágenes/Screenshots/screen_%m-%d-%Y_%H-%M-%S.png -d 1 --border -u -e 'xclip -selection clipboard -t image/png -i $f'")
     -- Focused display screnshot 
-        , ("M-C-<Print>", spawn "scrot Imágenes/Screenshots/screen_%m-%d-%Y_%H-%M-%S.png -d 1 -u -e 'xclip -selection clipboard -t image/png -i $f'")
+        , ("M-C-<Print>", spawn "scrot Imágenes/Screenshots/screen_%m-%d-%Y_%H-%M-%S.png -d 1--border -u -e 'xclip -selection clipboard -t image/png -i $f'")
     -- Selected display screnshot 
-    	, ("M-S-<Print>", spawn "scrot -s Imágenes/Screenshots/screen_%m-%d-%Y_%H-%M-%S.png -e 'xclip -selection clipboard -t image/png -i $f'")
+    	, ("M-S-<Print>", spawn "scrot -s Imágenes/Screenshots/screen_%m-%d-%Y_%H-%M-%S.png -d 1 --border -e 'xclip -selection clipboard -t image/png -i $f'")
         ]
     -- The following lines are needed for named scratchpads.
           where nonNSP          = WSIs (return (\ws -> W.tag ws /= "NSP"))

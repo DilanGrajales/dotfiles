@@ -72,7 +72,16 @@ Si prefieres hacerlo paso a paso:
     cp -r .config ~/
     cp -r .local ~/
     cp .zshrc ~/
+    cp .xinitrc ~/
+    cp .profile ~/
+    cp .xprofile ~/
+    cp .Xresources ~/
     ```
+
+    Estos archivos adicionales manejan:
+    - **.xinitrc**: Inicio de sesión (si usas `startx`).
+    - **.profile / .xprofile**: Variables de entorno.
+    - **.Xresources**: Configuración de DPI y colores para aplicaciones X11 antiguas.
 
 4. **Configura Temas**:
     - Mueve temas GTK a `~/.local/share/themes`.

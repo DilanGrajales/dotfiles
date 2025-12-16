@@ -101,6 +101,10 @@ install_config ".xmonad" "$HOME/.xmonad"
 install_config ".config" "$HOME/.config"
 install_config ".local" "$HOME/.local"
 install_config ".zshrc" "$HOME/.zshrc"
+install_config ".xinitrc" "$HOME/.xinitrc"
+install_config ".profile" "$HOME/.profile"
+install_config ".xprofile" "$HOME/.xprofile"
+install_config ".Xresources" "$HOME/.Xresources"
 
 # Crear directorios necesarios si no existen
 mkdir -p "$HOME/.local/share/themes"

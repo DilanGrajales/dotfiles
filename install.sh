@@ -107,6 +107,19 @@ install_config ".profile" "$HOME/.profile"
 install_config ".xprofile" "$HOME/.xprofile"
 install_config ".Xresources" "$HOME/.Xresources"
 
+# Restaurar propiedad y permisos de ejecutables
+echo -e "${GREEN}[+] Restaurando permisos de ejecutables...${NC}"
+CURRENT_USER=$(whoami)
+
+# Restaurar la propiedad de los archivos en .local/bin
+if [ -d "$HOME/.local/bin" ]; then
+    echo "    -> Restaurando propiedad de archivos en ~/.local/bin..."
+    sudo find "$HOME/.local/bin" -type f -exec chown $CURRENT_USER:$CURRENT_USER {} +
+    
+    echo "    -> Asegurando permisos de ejecución..."
+    chmod u+x "$HOME/.local/bin"/*
+fi
+
 # Crear directorios necesarios si no existen
 mkdir -p "$HOME/.local/share/themes"
 mkdir -p "$HOME/.local/share/icons"

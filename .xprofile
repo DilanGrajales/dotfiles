@@ -1,11 +1,10 @@
-# PATH
+## PATH
 export PATH="$HOME/.local/bin:$PATH"
 
-# DPI
-xft.dpi: 96
+## DPI
 xrandr --dpi 96 &
 
-# Cargar la configuración de tamaño/tema desde .Xresources
+## Cargar la configuración de tamaño/tema desde .Xresources
 xrdb -merge "$HOME/.Xresources" &
 
 # Definir el cursor del fondo (root window)

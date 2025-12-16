@@ -1,3 +1,7 @@
 Xcursor.size: 14
-Xcursor.theme: Sweet-cursors
+Xcursor.theme: Volantes
 Xcursor.theme_core: 1
+Xft.antialias: true
+Xft.hinting: true
+Xft.hintstyle: hintslight
+Xft.dpi: 96

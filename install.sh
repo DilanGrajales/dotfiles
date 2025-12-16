@@ -31,6 +31,7 @@ PACMAN_PKGS=(
     "xmonad"
     "xmonad-contrib"
     "xmobar"
+    "xdotool"
     "kitty"
     "dunst"
     "picom"

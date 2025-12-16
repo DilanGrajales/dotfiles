@@ -15,7 +15,7 @@ Estos son los programas necesarios para que todos los scripts y módulos funcion
 
 | Categoría | Paquete | Descripción |
 | :--- | :--- | :--- |
-| **Core** | `xmonad`, `xmonad-contrib`, `xmobar` | Gestor de ventanas y barra |
+| **Core** | `xmonad`, `xmonad-contrib`, `xmobar`, `xdotool` | Gestor de ventanas, barra y control |
 | **Terminal** | `kitty`, `zsh` | Emulador y Shell |
 | **Lanzadores** | `rofi`, `dmenu` (opcional) | Menús y lanzadores de apps |
 | **Utilidades** | `fzf`, `xclip`, `greenclip` | Búsqueda y portapapeles |

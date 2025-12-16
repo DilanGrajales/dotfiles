@@ -1,0 +1,6 @@
+[Desktop Entry]
+Type=Application
+Name=Thinkfan TUI (auto)
+Exec=/usr/bin/kitty /home/dilan/.local/bin/thinkfan-tui-run
+Terminal=false
+Categories=System;Utility;

@@ -7,174 +7,147 @@ Este repositorio contiene los archivos de configuración necesarios para instala
 - Linux (probado en distribuciones basadas en Arch)
 - [XMonad](https://xmonad.org/)
 - [Xmobar](https://xmobar.org/)
-- [Zsh](https://www.zsh.org/) (opcional, recomendado)
-- Otros programas sugeridos: `feh`, `rofi`, `kitty`, etc.
+- [Zsh](https://www.zsh.org/)
+
+### Tabla de Dependencias
+
+Estos son los programas necesarios para que todos los scripts y módulos funcionen correctamente:
+
+| Categoría | Paquete | Descripción |
+| :--- | :--- | :--- |
+| **Core** | `xmonad`, `xmonad-contrib`, `xmobar` | Gestor de ventanas y barra |
+| **Terminal** | `kitty`, `zsh` | Emulador y Shell |
+| **Lanzadores** | `rofi`, `dmenu` (opcional) | Menús y lanzadores de apps |
+| **Utilidades** | `fzf`, `xclip`, `greenclip` | Búsqueda y portapapeles |
+| **Pantalla** | `scrot`, `brightnessctl`, `feh`, `picom` | Capturas, brillo, fondo y compositor |
+| **Audio** | `pamixer`, `pulseaudio-utils` (pactl) | Control de volumen |
+| **Media** | `playerctl`, `ffmpeg` | Control multimedia y grabación |
+| **Red/BT** | `networkmanager`, `bluez`, `nmcli` | WiFi y Bluetooth |
+| **Notificaciones** | `dunst`, `libnotify` | Sistema de notificaciones |
+| **Sistema** | `upower`, `pacman-contrib`, `slop` | Batería, actualizaciones, selección |
+| **Estilo** | `nwg-look`, `lxappearance` | Configuración GTK |
 
 ## Instalación
 
-### Clona este repositorio
+### Método Automático (Recomendado)
+
+Este repositorio incluye un script de instalación que se encarga de:
+
+1. Instalar todas las dependencias (Pacman y AUR).
+2. Copiar los archivos de configuración (`.xmonad`, `.config`, `.local`).
+3. Configurar servicios básicos.
+4. (Opcional) Configurar Grub.
 
 ```zsh
 git clone https://github.com/DilanGrajeles/dotfiles.git ~/dotfiles
 cd ~/dotfiles
+chmod +x install.sh
+./install.sh
 ```
 
-### Instala XMonad, Xmobar y programas requeridos en la configuracion
+### Método Manual
 
-```zsh
-# Principal
-sudo pacman -S xmonad xmonad-contrib xmobar yay kitty
+Si prefieres hacerlo paso a paso:
 
-# Programas secundarios necesarios
-yay -S rofi greenclip xclip scrot rofi-power-menu rofi-calc betterlockscreen google-chrome amixer brightnessctl thunderbird
-
-```
-
-### Copia los archivos de configuración
-
-Es importante copiar los siguientes directorios y archivos a tu home (`~`):
-
-```zsh
-cp -r .xmonad ~/
-cp -r .config ~/
-cp -r .local ~/
-cp .zshrc ~/
-```
-
-Si ya tienes archivos previos, haz un respaldo antes de sobrescribirlos.
-
-### Instala dependencias adicionales
-
-- Instala fuentes recomendadas (ejemplo: `otf-apple-fonts`, `nerd-fonts-sf-mono-ligatures` `ttf-font-awesome`).
-- Instala otros programas que uses en tu configuración (`feh`, `rofi`, `tidal`, `emacs`, etc).
-
-### Inicia XMonad
-
-- Desde un gestor de sesiones, selecciona XMonad.
-
-### Configura grub
-
-#### Cambia la configuración de grub para seleccionar el boot menu
-
-1. Abrir el archivo grub
-
-    ```plaintext
-    .
-    ├── grub
-    │   ├── grub -> Modificar este archivo
-    │   └── themes/
-    ├── ...
-    ```
-
-2. Ubica el UUID de la particion de SWAP
+1. **Clona el repositorio**:
 
     ```zsh
-    lsblk -f
+    git clone https://github.com/DilanGrajeles/dotfiles.git ~/dotfiles
+    cd ~/dotfiles
     ```
 
-    ```plaintext
-    NAME        FSTYPE FSVER LABEL UUID                                 FSAVAIL FSUSE% MOUNTPOINTS
-    nvme0n1                                                                            
-    ├─nvme0n1p1 vfat   FAT32       98CC-4844                                           
-    ├─nvme0n1p2                                                                        
-    ├─nvme0n1p3 ntfs               121CD1CE1CD1ACCB                                    
-    ├─nvme0n1p4 ntfs               A4041A48041A1E3C                                    
-    ├─nvme0n1p5 vfat   FAT32       C84C-0675                             598.5M     0% /boot/efi
-    ├─nvme0n1p6 swap   1           961a57bd-c8c1-4044-8531-d703c266589e                [SWAP]     -- Copiar este UUID
-    ├─nvme0n1p7 ext4   1.0         3fe18c4e-325b-4684-862a-64707e4ca284   89.7G    17% /
-    └─nvme0n1p8 ext4   1.0         83a28f36-1b5d-4158-92b8-1b172554160b   85.2G    10% /home
-    ```
-
-3. Cambia la linea `GRUB_CMDLINE_LINUX_DEFAULT` para que no de error la hibernacion
-
-    Pega el UUID de la particion SWAP
-
-    ```plaintext
-    GRUB_CMDLINE_LINUX_DEFAULT='quiet ... resume=UUID=SWAP_UUID'
-    ```
-
-4. Mueve el archivo a `/etc/default/
-
-5. Compila los cambios para que se efectuen
+2. **Instala paquetes**:
+    Revisa la tabla de dependencias arriba e instala los paquetes con `pacman` y `yay`.
 
     ```zsh
+    # Ejemplo básico
+    sudo pacman -S xmonad xmonad-contrib xmobar kitty dunst zsh
+    yay -S greenclip rofi-power-menu nwg-look
+    ```
+
+3. **Copia configuraciones**:
+
+    ```zsh
+    cp -r .xmonad ~/
+    cp -r .config ~/
+    cp -r .local ~/
+    cp .zshrc ~/
+    ```
+
+4. **Configura Temas**:
+    - Mueve temas GTK a `~/.local/share/themes`.
+    - Mueve iconos a `~/.local/share/icons`.
+    - Usa `nwg-look` para aplicar el tema.
+
+#### Iconos y Cursores
+
+1. Mueve los iconos y cursores a `.local/share/icons`
+
+    ```zsh
+    mkdir -p ~/.local/share/icons
+    # cp -r ./themes/icons/NombreIconos ~/.local/share/icons/
+    # cp -r ./themes/cursors/NombreCursores ~/.local/share/icons/
+    ```
+
+2. Selecciona el tema
+
+    Ve a `nwg-look` y selecciona el tema, iconos y cursor.
+
+#### Fondos de Pantalla y Lockscreen
+
+El instalador mueve los fondos a `/usr/share/backgrounds/`.
+
+Para actualizar el fondo de pantalla de bloqueo (`betterlockscreen`):
+
+```zsh
+# Actualizar caché con una imagen específica
+betterlockscreen -u /usr/share/backgrounds/mountains.png
+
+# O usar la configuración de xmonad si está vinculada
+```
+
+### Copiar configuración de Grub
+
+El archivo `./grub/grub` ya contiene la configuración necesaria (temas, resolución 2K, parámetros de hibernación y gráficos).
+
+1. **Verifica el UUID de SWAP**
+    - Ejecuta `lsblk -f` para obtener tu UUID.
+    - Edita `./grub/grub` si tu UUID es diferente al preconfigurado.
+
+2. **Instala y Copia**
+
+    ```zsh
+    sudo cp ./grub/grub /etc/default/grub
+    
+    # Instalar tema
+    sudo mkdir -p /usr/share/grub/themes
+    sudo cp -r ./grub/themes/thinkpad/ /usr/share/grub/themes/
+    
+    # Generar config
     sudo grub-mkconfig -o /boot/grub/grub.cfg
     ```
-
-#### Temas
-
-Mueve la carpeta de `themes` dentro de grub al sistema
-
-```zsh
-sudo cp -r ./grub/themes/thinkpad/ /usr/share/grub/themes
-```
-
-### Temas del sistema
-
-Mueve las carpetas correspondientes
-
-#### GTK
-
-1. Mueve la carpeta
-
-    ```zsh
-    sudo cp -r ./themes/gtk/Graphite-blue-Dark-nord/ /usr/share/themes/
-    ```
-
-2. Selecciona el tema
-
-    Ve a `lxappearance` y selecciona el tema
-
-#### Kvantum
-
-1. Mueve la carpeta
-
-    ```zsh
-    cp -r ./themes/kvantum/Layan-solid/ /.local/share/themes/
-    ```
-
-2. Selecciona el tema
-
-    Ve a `kvantummanager` y selecciona el tema
 
 ## Opciones de energia
 
 ### Usar solo monitor con tapa cerrada
 
-#### Configurar servicio
-
-1. Abre las opciones de inicio
-
-    ```zsh
-    sudo nano /etc/systemd/logind.conf
-    ```
-
-2. Modifica la directiva de cierre de tapa
+1. **Editar logind.conf**: `sudo nano /etc/systemd/logind.conf`
+2. **Modificar**:
 
     ```plaintext
-    ...
-    #HandleLidSwitchDocked=suspend -- antes
-
-    HandleLidSwitchDocked=ignore -- despues
-    ...
+    HandleLidSwitch=ignore
+    HandleLidSwitchDocked=ignore
+    IdleAction=ignore
+    IdleActionSec=infinity
     ```
 
-3. Reinicia el servicio
-
-    ```zsh
-    sudo systemctl restart systemd-logind.service
-    ```
+3. **Reiniciar servicio**: `sudo systemctl restart systemd-logind.service`
 
 ## Personalización
 
 - Modifica los archivos en `.xmonad/` para cambiar atajos, apariencia y comportamiento.
 - Edita `.config/xmobar/` para personalizar la barra de estado.
-- Cambia `.zshrc` para personalizar tu shell.
-
-## Notas
-
-- Si tienes problemas con la configuración, revisa los logs de XMonad y Xmobar.
-- Puedes adaptar estos archivos a tus necesidades.
+- Scripts propios en `.local/bin/`.
 
 ---
 

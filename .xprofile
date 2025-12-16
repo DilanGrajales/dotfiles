@@ -1,0 +1,6 @@
+## PATH
+export PATH="$HOME/.local/bin:$PATH"
+
+## DPI
+xft.dpi: 120
+xrandr --dpi 120

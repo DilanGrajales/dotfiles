@@ -85,7 +85,7 @@ myTerminal :: String
 myTerminal = "kitty"    -- Sets default terminal
 
 myBrowser :: String
-myBrowser = "google-chrome-stable --force-device-scale-factor=1.5"  -- Sets google-chrome as browser
+myBrowser = "google-chrome-stable --force-device-scale-factor=1"  -- Sets google-chrome as browser
 
 -- myEmacs :: String
 -- myEmacs = "emacsclient -c -a 'emacs' "  -- Makes emacs keybindings easier to type
@@ -95,10 +95,10 @@ myBrowser = "google-chrome-stable --force-device-scale-factor=1.5"  -- Sets goog
 -- myEditor = myTerminal ++ " -e vim "    -- Sets vim as editor
 
 myBorderWidth :: Dimension
-myBorderWidth = 1           -- Sets border width for windows
+myBorderWidth = 2           -- Sets border width for windows
 
 myNormColor :: String       -- Border color of normal windows
-myNormColor   = color01   -- This variable is imported from Colors.THEME
+myNormColor   = color09   -- This variable is imported from Colors.THEME
 
 myFocusColor :: String      -- Border color of focused windows
 myFocusColor  = color04     -- This variable is imported from Colors.THEME
@@ -108,24 +108,25 @@ windowCount = gets $ Just . show . length . W.integrate' . W.stack . W.workspace
 
 myStartupHook :: X ()
 myStartupHook = do
+    spawnOnce "sh ~/.screenlayout/smart_dual_monitor.sh"
+    -- spawnOnce "sh ~/.screenlayout/single_external_monitor.sh"
     spawn "killall conky"   -- kill current conky on each restart
     spawn "greenclip daemon" -- start rofi-clipboard service
     --spawnOnce "xrandr --auto --output DP-1 --mode 3840x2160 -r 60 --above eDP-1"
-    spawnOnce "sh ~/.screenlayout/single_external_monitor.sh"
     -- spawnOnce "discord"
-    spawnOnce "google-chrome-stable --force-device-scale-factor=1.5"
+    -- spawnOnce "google-chrome-stable --force-device-scale-factor=1"
     spawnOnce "picom &"
-    spawnOnce "nm-applet"
-    spawnOnce "volumeicon"
+    -- spawnOnce "nm-applet"
+    -- spawnOnce "volumeicon"
     -- spawnOnce "thunderbird"
-    spawnOnce "tidal-hifi"
+    -- spawnOnce "tidal-hifi"
     -- spawnOnce "/usr/bin/emacs --daemon" -- emacs daemon for the emacsclient
 
     -- spawn ("sleep 2 && conky -c $HOME/.config/conky/xmonad/" ++ colorScheme ++ "-01.conkyrc")
     -- spawn ("sleep 2 && trayer --edge top --align right --widthtype request --padding 6 --SetDockType true --SetPartialStrut true --expand true --monitor 1 --transparent true --alpha 0 " ++ colorTrayer ++ " --height 22")
 
     -- spawnOnce "xargs xwallpaper --stretch < ~/.cache/wall"
-    spawnOnce "feh --bg-fill --no-fehbg /usr/share/backgrounds/od_tux.png"  -- set last saved feh wallpaper
+    spawnOnce "sh ~/.fehbg &"  -- set last saved feh wallpaper
     setWMName "LG3D"
 
 myColorizer :: Window -> Bool -> X (String, String)
@@ -291,7 +292,7 @@ myTabTheme = def { fontName            = myFont
                  , activeColor         = color04
                  , inactiveColor       = color05
                  , activeBorderColor   = color04
-                 , inactiveBorderColor = colorBack
+                 , inactiveBorderColor = color08
                  , activeTextColor     = color08
                  , inactiveTextColor   = color05
                  }
@@ -346,6 +347,7 @@ myManageHook = composeAll
      , className =? "gcolor3"         --> doFloat
      , className =? "pavucontrol"     --> doCenterFloat
      , title =? "Control de volumen"  --> doCenterFloat
+     , title =? "Progreso de las operaciones de archivo"  --> doCenterFloat
      , title =? "Dispositivos Bluetooth"  --> doCenterFloat
      , title =? "Selector de color"   --> doFloat
      , className =? "sticky-notes"    --> doFloat
@@ -363,7 +365,8 @@ myManageHook = composeAll
      , isFullscreen 		      -->  doFullFloat
      -- Development
      , title =? "Visual Studio Code"  --> doShift ( myWorkspaces !! 2 )
-     , title =? "Cypress"             --> doShift (myWorkspaces !! 4 )
+     , title =? "Antigravity"  --> doShift ( myWorkspaces !! 2 )
+     -- , title =? "Cypress"             --> doShift (myWorkspaces !! 4 )
      -- Gimp
      , title =? "Programa de manipulación de imágenes de GNU"   --> doShift ( myWorkspaces !! 7 )
      , title =? "Cambiar el color de primer plano"      	--> doCenterFloat
@@ -372,6 +375,7 @@ myManageHook = composeAll
      , title =? "Cambiar el color del texto seleccionado" 	--> doCenterFloat
      , title =? "Exportar la imagen"			      	--> doCenterFloat
      , title =? "Salir de GIMP"			      		--> doCenterFloat
+     , title =? "Exportar imagen como PNG"			--> doCenterFloat
      ] <+> namedScratchpadManageHook myScratchPads
 
 -- START_KEYS
@@ -392,10 +396,13 @@ myKeys =
 	, ("M-S-w", spawn "wifimenu") --rofi wifimenu
 	, ("M-S-e", spawn "rofi -show calc -modi calc -no-show-match -no-sort") --rofi calc
 	, ("M-x", spawn "rofi -show p -modi p:rofi-power-menu") --rofi powermenu
-	, ("M-S-t", spawn "rofi_trans verbose") --rofi translator
+	-- , ("M-S-t", spawn "rofi_trans verbose") --rofi translator
+	, ("M-S-t", spawn "rofi-translate-copy") --rofi translator
 
     -- KB_GROUP Run rofi-greenclip
     	, ("M-v", spawn "rofi -modi 'clipboard:greenclip print' -show clipboard -run-command '{cmd}'") -- print clipboard history
+    	--, ("M-v", spawn "clipmenu") -- print clipboard history
+
 
     -- KB_GROUP Other Dmenu Prompts
     -- In Xmonad and many tiling window managers, M-p is the default keybinding to
@@ -420,7 +427,7 @@ myKeys =
     -- KB_GROUP Useful programs to have a keybinding for launch
         , ("M-<Return>", spawn (myTerminal))
         , ("M-b", spawn (myBrowser))
-	, ("C-e", spawn "pcmanfm")
+	, ("C-e", spawn "thunar")
         , ("M-M1-h", spawn (myTerminal ++ "htop"))
 
     -- KB_GROUP Kill windows
@@ -467,11 +474,12 @@ myKeys =
    -- KB_GROUP Custom
     	, ("M-<XF86AudioPlay>", spawn "tidal-hifi")         -- Open Tidal HiFi
     	, ("<XF86Calculator>", spawn "rofi -show calc")     -- Open Calc
-	, ("<XF86ScreenSaver>", spawn "betterlockscreen -l dimblur")
+        , ("<XF86ScreenSaver>", spawn "betterlockscreen -l dimblur")
+        , ("<XF86Display>", spawn "arandr")
 
    -- Brightness
     	, ("<XF86MonBrightnessUp>", spawn "brightnesscontrol.sh i") -- Brightness Up
-	, ("<XF86MonBrightnessDown>", spawn "brightnesscontrol.sh d") -- Brightness Down
+	    , ("<XF86MonBrightnessDown>", spawn "brightnesscontrol.sh d") -- Brightness Down
 
     -- KB_GROUP Increase/decrease windows in the master pane or the stack
         , ("M-S-<Up>", sendMessage (IncMasterN 1))      -- Increase # of clients master pane
@@ -524,9 +532,9 @@ myKeys =
         -- , ("M-e a", spawn (myEmacs ++ ("--eval '(emms)' --eval '(emms-play-directory-tree \"~/Music/\")'")))
 
     -- KB_GROUP Multimedia Keys
-        , ("<XF86AudioPlay>", spawn "tidal-cli playpause")
-        , ("<XF86AudioPrev>", spawn "tidal-cli previous")
-        , ("<XF86AudioNext>", spawn "tidal-cli next")
+        , ("<XF86AudioPlay>", spawn "music-cli playpause && media-center-notify")
+        , ("<XF86AudioPrev>", spawn "music-cli previous && media-center-notify")
+        , ("<XF86AudioNext>", spawn "music-cli next && media-center-notify")
         -- , ("<XF86AudioMute>", spawn "amixer set Master toggle") -- Mute/Unmute audio
         , ("<XF86AudioMute>", spawn "volumepactl m") -- Mute/Unmute audio
         , ("<XF86AudioLowerVolume>", spawn "volumepactl d") -- Lower audio volume
@@ -540,6 +548,7 @@ myKeys =
         , ("M-C-<Print>", spawn "scrot Imágenes/Screenshots/screen_%m-%d-%Y_%H-%M-%S.png -d 1--border -u -e 'xclip -selection clipboard -t image/png -i $f'")
     -- Selected display screnshot 
     	, ("M-S-<Print>", spawn "scrot -s Imágenes/Screenshots/screen_%m-%d-%Y_%H-%M-%S.png -d 1 --border -e 'xclip -selection clipboard -t image/png -i $f'")
+	, ("M-S-v", spawn "rec-region")
         ]
     -- The following lines are needed for named scratchpads.
           where nonNSP          = WSIs (return (\ws -> W.tag ws /= "NSP"))
@@ -549,10 +558,12 @@ myKeys =
 main :: IO ()
 main = do
     -- Launching three instances of xmobar on their monitors.
+    -- Monitor 0: Usamos la config NORMAL (1440p)
     xmproc0 <- spawnPipe ("xmobar -x 0 $HOME/.config/xmobar/" ++ colorScheme ++ "-xmobarrc")
-    xmproc1 <- spawnPipe ("xmobar -x 1 $HOME/.config/xmobar/" ++ colorScheme ++ "-xmobarrc")
-    -- xmproc2 <- spawnPipe ("xmobar -x 2 $HOME/.config/xmobar/" ++ colorScheme ++ "-xmobarrc")
-    -- the xmonad, ya know...what the WM is named after!
+    
+    -- Agregamos "-4k" al final del string para que busque "onedark-xmobarrc-4k"
+    xmproc1 <- spawnPipe ("xmobar -x 1 $HOME/.config/xmobar/" ++ colorScheme ++ "-xmobarrc-4k")
+
     xmonad $ docks $ ewmh def
         { manageHook         = myManageHook <+> manageDocks
         -- , handleEventHook    = docksEventHook
@@ -573,7 +584,6 @@ main = do
               -- XMOBAR SETTINGS
               { ppOutput = \x -> hPutStrLn xmproc0 x   -- xmobar on monitor 1
                               >> hPutStrLn xmproc1 x   -- xmobar on monitor 2
-                              -- >> hPutStrLn xmproc2 x   -- xmobar on monitor 3
                 -- Current workspace
               , ppCurrent = xmobarColor color04 "" . wrap "[" "]"
                 -- Visible but not current workspace

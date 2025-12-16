@@ -1,0 +1,28 @@
+#!/bin/bash
+# Auto-habilita fan_control=1 y lanza thinkfan-tui
+
+set -euo pipefail
+
+MODPROBE="/usr/bin/modprobe"
+PARAM="/sys/module/thinkpad_acpi/parameters/fan_control"
+
+need_reload() {
+  # 1) ¿está el módulo cargado?
+  if ! grep -q '^thinkpad_acpi ' /proc/modules 2>/dev/null; then
+    return 0
+  fi
+  # 2) ¿tiene fan_control activado? (Y/1)
+  if [[ -r "$PARAM" ]]; then
+    v="$(tr -d '\0' < "$PARAM")"
+    [[ "$v" == "Y" || "$v" == "1" ]] && return 1 || return 0
+  fi
+  return 0
+}
+
+if need_reload; then
+  # intenta con sudo; si no hay NOPASSWD pedirá password una vez
+  sudo "$MODPROBE" -r thinkpad_acpi || true
+  sudo "$MODPROBE" thinkpad_acpi fan_control=1
+fi
+
+exec thinkfan-tui

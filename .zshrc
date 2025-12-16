@@ -19,14 +19,12 @@ fi
 source /usr/share/zsh-theme-powerlevel10k/powerlevel10k.zsh-theme
 
 # Plugins
-source /usr/share/zsh-sudo/sudo.plugin.zsh
+source /usr/share/plugins/sudo.zsh
 
 # Alias
-alias run="python manage.py runserver"
+alias ls="lsd -a"
 alias icat="kitten icat"
-alias venv="source env/bin/activate"
 alias ssdhealth="sudo smartctl -A /dev/nvme0n1"
-
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
@@ -34,9 +32,6 @@ alias ssdhealth="sudo smartctl -A /dev/nvme0n1"
 # nvm
 source /usr/share/nvm/init-nvm.sh
 autoload -U add-zsh-hook
-
-# Tyy colors
-source /home/${USER}/.config/tty/one-dark-tty.sh
 
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
@@ -60,7 +55,7 @@ load-nvmrc() {
   fi
 }
 
-add-zsh-hook chpwd load-nvmrc
+# add-zsh-hook chpwd load-nvmrc
 
 # pnpm
 export PNPM_HOME="/home/${USER}/.local/share/pnpm"

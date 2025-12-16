@@ -1,0 +1,73 @@
+#!/usr/bin/env bash
+
+# --- Configuración ---
+LANG_PAIR=":es+en"       # Autodetectar ES <-> EN
+HISTORY_FILE="$HOME/.cache/rofi-translate-hist"
+MAX_HISTORY=50
+ROFI_LINES=10            # Número de líneas visibles para el historial
+
+# 1. Crear historial si no existe
+if [ ! -f "$HISTORY_FILE" ]; then
+    touch "$HISTORY_FILE"
+fi
+
+# 2. TRUCO VISUAL: Si el historial está vacío, agregar una guía
+# Esto asegura que veas la lista desplegada la primera vez que lo usas.
+if [ ! -s "$HISTORY_FILE" ]; then
+    echo "Escribe cualquier palabra para traducir" >> "$HISTORY_FILE"
+fi
+
+# --- Paso 1: Rofi con Historial ---
+# Leemos historial, invertimos orden (tac) y quitamos duplicados (awk)
+HISTORY_CONTENT=$(tac "$HISTORY_FILE" | awk '!seen[$0]++')
+
+# Mostramos el menú.
+# -lines $ROFI_LINES: Fuerza a Rofi a mostrar la lista DE INMEDIATO (antes de escribir).
+INPUT=$(echo "$HISTORY_CONTENT" | rofi -dmenu -i -p "Traducir (ES ⇄ EN):" -lines "$ROFI_LINES")
+
+# Salir si se cancela (ESC)
+[ -z "$INPUT" ] && exit 0
+
+# --- Paso 2: Lógica de Decisión ---
+
+SEPARATOR=" ➜ "
+
+if [[ "$INPUT" == *"$SEPARATOR"* ]]; then
+    # === CASO A: EL USUARIO SELECCIONÓ DEL HISTORIAL ===
+    # Extraer la traducción (parte derecha del separador)
+    RESULT=$(echo "$INPUT" | awk -F "$SEPARATOR" '{print $2}')
+    
+    # Copiar
+    echo -n "$RESULT" | xclip -selection clipboard
+    echo -n "$RESULT" | xclip -selection primary
+    
+    notify-send -a "Translator" "Historial Copiado:" "$RESULT"
+
+else
+    # === CASO B: NUEVA TRADUCCIÓN (TEXTO NUEVO) ===
+    
+    # Traducir (autodetectando idioma)
+    TRANSLATION=$(trans -brief $LANG_PAIR "$INPUT")
+
+    # Si falla o es vacío, salir
+    [ -z "$TRANSLATION" ] && exit 1
+
+    # Mostrar resultado para confirmar
+    SELECTION=$(echo "$TRANSLATION" | rofi -dmenu -p "Copiar:" -lines 1)
+
+    # Si confirmamos con ENTER
+    if [ -n "$SELECTION" ]; then
+        # Copiar
+        echo -n "$SELECTION" | xclip -selection clipboard
+        echo -n "$SELECTION" | xclip -selection primary
+        
+        # Guardar en Historial (Input ➜ Resultado)
+        NEW_ENTRY="${INPUT}${SEPARATOR}${SELECTION}"
+        echo "$NEW_ENTRY" >> "$HISTORY_FILE"
+        
+        # Limpieza (Mantener solo las últimas N líneas)
+        tail -n "$MAX_HISTORY" "$HISTORY_FILE" > "${HISTORY_FILE}.tmp" && mv "${HISTORY_FILE}.tmp" "$HISTORY_FILE"
+
+        notify-send -a "Translator" "Traducido:" "$SELECTION"
+    fi
+fi

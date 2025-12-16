@@ -1,0 +1,66 @@
+#!/bin/bash
+
+set -e
+
+echo ""
+echo "🧹 Docker Cleanup Utility"
+echo "------------------------------------"
+
+case "$1" in
+  basic)
+    echo "➡️  Limpieza básica de contenedores del proyecto..."
+    docker compose down --remove-orphans
+    echo "✅ Listo (contenedores y redes del compose eliminados)"
+    ;;
+
+  volumes)
+    echo "➡️  Eliminando volúmenes NO utilizados..."
+    docker volume prune -f
+    echo "✅ Listo (solo volúmenes huérfanos borrados)"
+    ;;
+
+  images)
+    echo "➡️  Eliminandoo imagenes NO utilizadas..."
+    docker image prune -f
+    echo "✅ Listo (solo imagenes huérfanas borradas)"
+    ;;
+
+  hard)
+    echo "⚠️  Limpieza fuerte del proyecto (contenedores + redes + volúmenes)..."
+    docker compose down -v --remove-orphans
+    echo "🧹 Ejecutando pruning de volúmenes no usados globales..."
+    docker volume prune -f
+    echo "✅ Proyecto reseteado completamente"
+    ;;
+
+  nuke)
+    echo "💀 WARNING: Limpieza TOTAL de Docker"
+    echo "    - Elimina contenedores detenidos"
+    echo "    - Elimina imágenes no utilizadas"
+    echo "    - Elimina build cache"
+    echo "    - Elimina redes no usadas"
+    echo "    - Elimina volúmenes no usados"
+    echo ""
+    read -p "¿Seguro que deseas continuar? (yes/no): " confirm
+
+    if [ "$confirm" = "yes" ]; then
+      docker system prune -a --volumes -f
+      echo "🔥 Docker ha sido limpiado completamente."
+    else
+      echo "❌ Cancelado"
+    fi
+    ;;
+
+  *)
+    echo "❓ Uso: ./cleanup.sh [basic | volumes | hard | nuke]"
+    echo ""
+    echo "📘 Comandos:"
+    echo "  basic   → docker compose down --remove-orphans"
+    echo "  volumes → docker volume prune"
+    echo "  images  → docker image prune"
+    echo "  hard    → compose down -v + prune de volúmenes"
+    echo "  nuke    → docker system prune -a --volumes"
+    echo ""
+    exit 1
+    ;;
+esac

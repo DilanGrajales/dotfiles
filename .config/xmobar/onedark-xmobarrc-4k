@@ -1,0 +1,48 @@
+Config
+  { font = "SF Pro Display semibold 14"
+  , additionalFonts =
+      [ "Mononoki 14"
+      , "Font Awesome 6 Free Solid 14"
+      , "Font Awesome 6 Brands 14"
+      ]
+  , bgColor = "#2e3440"
+  , fgColor = "#abb2bf"
+  , alpha = 0
+  -- Aumentamos la altura a 48px para que quepa la fuente grande
+  , position = TopSize L 100 48
+  , lowerOnStart = True
+  , hideOnStart = False
+  , allDesktops = True
+  , persistent = True
+  , iconRoot = ".xmonad/xpm/"
+  , commands =
+      [ Run Com "echo" ["<fc=#abb2bf><fn=2>\xf0f3</fn></fc>"] "penguin" 3600
+      , Run Com ".local/bin/pacupdate" [] "pacupdate" 36000
+      
+      -- He ajustado ligeramente los iconos para asegurar espacio
+      , Run Cpu [ "-t", "<fc=#abb2bf><fn=2>\xf2db</fn></fc> <total>%", "-H", "50", "--high", "red" ] 25
+      
+      -- Mismo sensor de temperatura
+      , Run MultiCoreTemp [ "-hwmonitor-path", "/sys/module/k10temp/drivers/pci:k10temp/0000:00:18.3/hwmon/hwmon5", "-t", "<fc=#abb2bf><fn=2>\xf2c9</fn></fc> <avg>°C", "-H", "60", "--high", "red", "-L", "40", "--low", "green", "-h", "red", "-l", "white" ] 25
+      
+      , Run Memory ["-t", "<fc=#abb2bf><fn=2>\xf538</fn></fc> <usedratio>%"] 25
+      , Run DiskU [("/", "<fc=#abb2bf><fn=2>\xf0a0</fn></fc> <usedp>%")] [] 3600
+      
+      -- Nota: brightnessctl controlará el brillo de la laptop, no del monitor externo, pero lo dejo por coherencia
+      , Run Com "sh" ["-c", "echo \"<fc=#abb2bf><fn=2>\xf185</fn></fc> $(brightnessctl -m | awk -F, '{print $4}')\""] "bright" 5
+      
+      , Run Battery [ "-t", "<acstatus> <left>", "--", "-O", "<fc=#abb2bf><fn=2>\xf0e7</fn></fc>", "-i", "<fc=#e5c07b><fn=2>\xf0e7</fn></fc>", "-o", "", "-L", "20", "-l", "red", "-H", "80", "-h", "green", "-p", "green", "-f", "ACAD/online", "-P", "--lows", "<fc=#e06c75><fn=2>\xf243</fn></fc>", "--mediums", "<fc=#e5c07b><fn=2>\xf242</fn></fc>", "--highs", "<fc=#abb2bf><fn=2>\xf240</fn></fc>" ] 25
+      
+      , Run Com "/bin/bash" [".config/xmobar/get-volume.sh"] "volume" 5
+      , Run Date "<fc=#abb2bf><fn=2>\xf783</fn></fc>  %b %d - %H:%M " "date" 50
+      
+      -- ELIMINADO: trayer-padding (no lo necesitamos en el 2do monitor)
+      
+      , Run UnsafeStdinReader
+      ]
+  , sepChar = "%"
+  , alignSep = "}{"
+  , template =
+      -- He quitado el trayerpad del final y mantenido el resto
+      " <action=`rofi -show p -modi p:rofi-power-menu`><icon=haskell_20.xpm/></action>  <fc=#abb2bf>|</fc> %UnsafeStdinReader% }{<action=`kitty -e sudo pacman -Syu`>%penguin% %pacupdate%</action>   <action=`kitty -e btop`>%cpu%</action>   <action=`kitty -e watch sensors`>%multicoretemp%</action>   <action=`kitty -e btop`>%memory%</action>   <action=`thunar`>%disku%</action>   <action=`pavucontrol`>%bright%</action>   %battery%   <action=pavucontrol>%volume%</action>   <action=`yad --calendar --undecorated --fixed --close-on-unfocus --no-buttons`>%date%</action> "
+  }

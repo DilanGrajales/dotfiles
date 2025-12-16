@@ -1,7 +1,7 @@
 configuration{
     modi: "run,drun,window,filebrowser,calc";
-    lines: 7;
-    font: "SF Pro 13";
+    lines: 8;
+    font: "SF Pro Text 12";
     show-icons: true;
     icon-theme: "Oranchelo";
     terminal: "st";
@@ -25,7 +25,8 @@ element-text, element-icon, mode-switcher {
 }
 
 window {
-    height: 560px;
+    height: 600px;
+    width:  900px;
     border: 0px;
     border-color: @border-col;
     background-color: @bg-col;
@@ -44,7 +45,7 @@ inputbar {
 
 prompt {
     background-color: @blue;
-    padding: 6px;
+    padding: 4px;
     text-color: @bg-col;
     border-radius: 3px;
     margin: 20px 0px 0px 20px;
@@ -66,12 +67,12 @@ listview {
     border: 0px 0px 0px;
     padding: 6px 0px 0px;
     margin: 10px 0px 0px 20px;
-    columns: 1;
+    columns: 2;
     background-color: @bg-col;
 }
 
 element {
-    padding: 5px;
+    padding: 3px;
     background-color: @bg-col;
     text-color: @fg-col  ;
 }

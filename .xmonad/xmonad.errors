@@ -1,8 +1,0 @@
-$ ghc --make xmonad.hs -i -ilib -fforce-recomp -main-is main -dynamic -v0 -outputdir /home/dilangrajales/.xmonad/build-x86_64-linux -o /home/dilangrajales/.xmonad/xmonad-x86_64-linux
-
-xmonad.hs:354:31: warning: [-Wtabs]
-    Tab character found here, and in 39 further locations.
-    Suggested fix: Please use spaces instead.
-    |
-354 |      , title =? "AnyDesk Chat"        --> doCenterFloat
-    |                               ^^

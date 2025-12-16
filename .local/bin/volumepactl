@@ -35,13 +35,16 @@ notify_user() {
   local mute_status
   mute_status=$(get_mute)
   local icon=""
-  local text=""
+  local title=""
+  local body=""
+  local bar_color="#d79921" # Amarillo
 
   if [[ "$mute_status" == "true" ]]; then
     icon="muted"
-    text="Volume (Muted)"
+    title="Muted"
+    body="" # Sin porcentaje si está muteado
+    bar_color="#928374"
   else
-    # Lógica para seleccionar el ícono de volumen
     if (( vol >= 66 )); then
       icon="volume-3"
     elif (( vol >= 33 )); then
@@ -51,14 +54,17 @@ notify_user() {
     else
       icon="volume-0"
     fi
-    text="Volume"
+    title="Volume"
+    body="${vol}%" # Aquí va el porcentaje para la segunda línea
   fi
 
-  # Enviar la notificación
+  # NOTA LOS CAMBIOS AQUÍ:
+  # 1. Pasamos "$title" y "$body" como dos argumentos separados al final.
   notify-send -a "volumecontrol" -r 2 -t 800 \
     -h int:value:"$vol" \
+    -h string:hlcolor:"$bar_color" \
     -i "${icodir}/${icon}.svg" \
-    "$text" "$vol%"
+    "$title" "$body"
 }
 
 # --- Acciones Principales ---

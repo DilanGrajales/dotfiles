@@ -1,0 +1,60 @@
+#!/bin/bash
+
+# --- Configuración One Dark (como en tu script de xmobar) ---
+COLOR_PAUSED="#61afef"  # Azul
+COLOR_PLAYING="#e5c07b"   # Amarillo/Dorado
+
+# 1. Busca el reproductor específico
+PLAYER=$(playerctl -l 2>/dev/null | grep 'chromium.instance' | head -n 1)
+
+if [ -z "$PLAYER" ]; then
+    # Si no hay reproductor, salimos sin hacer nada
+    exit 0
+fi
+
+STATUS=$(playerctl --player=$PLAYER status 2>/dev/null)
+
+get_metadata() {
+    ARTIST=$(playerctl --player=$PLAYER metadata artist)
+    TITLE=$(playerctl --player=$PLAYER metadata title)
+    
+    # Si falta la metadata, salimos
+    if [ -z "$ARTIST" ] || [ -z "$TITLE" ]; then
+        echo ""
+        return
+    fi
+    
+    # Recortar el título como lo haces en tu script
+    if [ ${#TITLE} -gt 40 ]; then
+        TITLE="$(echo "$TITLE" | cut -c1-40)..."
+    fi
+    
+    echo "$ARTIST - $TITLE"
+}
+
+METADATA=$(get_metadata)
+ALBUM_ART_PATH=$(playerctl --player=$PLAYER metadata mpris:artUrl 2>/dev/null)
+
+# 2. Enviar la notificación con dunstify
+if [ -n "$METADATA" ]; then
+    if [[ "$STATUS" == "Playing" ]]; then
+        # Notificación para estado Reproduciendo (color azul)
+        dunstify "⏸️ Pausado" "$METADATA" \
+            -r 9995 \
+            -a "media-center-notify" \
+            -i "$ALBUM_ART_PATH" \
+            -h string:frcolor:"$COLOR_PLAYING" \
+            -u normal \
+            -t 3000
+            
+    elif [[ "$STATUS" == "Paused" ]]; then
+        # Notificación para estado Pausado (color amarillo)
+        dunstify "🎵 Reproduciendo" "$METADATA" \
+            -r 9995 \
+            -a "media-center-notify" \
+            -i "$ALBUM_ART_PATH" \
+            -h string:frcolor:"$COLOR_PAUSED" \
+            -u normal \
+            -t 3000
+    fi
+fi

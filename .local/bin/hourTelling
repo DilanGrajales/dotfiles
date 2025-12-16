@@ -1,0 +1,12 @@
+#!/bin/bash
+
+# Obtenemos la hora actual
+HORA=$(date +"%H:%M")
+
+# Opción A: Notificación Visual (burbuja en pantalla)
+notify-send "Hora Actual" "Son las $HORA" -i clock -u low \
+-h string:bgcolor:#e5c07b -h string:fgcolor:#000000
+
+# Opción B: Audio (Voz)
+# Si quieres que la computadora "hable", descomenta la siguiente línea:
+# spd-say "Son las $HORA"

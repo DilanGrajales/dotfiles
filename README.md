@@ -152,6 +152,22 @@ El archivo `./grub/grub` ya contiene la configuración necesaria (temas, resoluc
 
 3. **Reiniciar servicio**: `sudo systemctl restart systemd-logind.service`
 
+## Configuración de Pantallas (LightDM)
+
+Para que la configuración de pantallas se aplique al iniciar sesión en LightDM, crea un enlace simbólico al script de layout:
+
+```zsh
+sudo ln -s /home/$USER/.screenlayout/smart_dual_monitor.sh /etc/lightdm/display_setup.sh
+```
+
+Y en la configuración de `/etc/lightdm/lightdm.conf`, agrega esta línea bajo el apartado `[Seat:*]`:
+
+```ini
+[Seat:*]
+...
+display-setup-script=/etc/lightdm/display_setup.sh
+```
+
 ## Personalización
 
 - Modifica los archivos en `.xmonad/` para cambiar atajos, apariencia y comportamiento.

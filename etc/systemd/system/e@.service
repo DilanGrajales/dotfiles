@@ -1,0 +1,13 @@
+[Unit]
+Description=maia color scheme for the console
+After=getty@%i.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/maia-console
+StandardOutput=tty
+TTYPath=/dev/%i
+TTYVTDisallocate=yes
+
+[Install]
+WantedBy=getty@%i.service

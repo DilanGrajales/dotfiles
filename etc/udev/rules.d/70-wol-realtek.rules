@@ -1,0 +1,1 @@
+ACTION=="add", SUBSYSTEM=="net", ATTRS{idVendor}=="0bda", ATTRS{idProduct}=="8153", RUN+="/usr/bin/ethtool -s $name wol g"

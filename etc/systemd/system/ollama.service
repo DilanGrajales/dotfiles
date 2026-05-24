@@ -1,0 +1,14 @@
+[Unit]
+Description=Ollama Service
+After=network-online.target
+
+[Service]
+ExecStart=/usr/local/bin/ollama serve
+User=ollama
+Group=ollama
+Restart=always
+RestartSec=3
+Environment="PATH=/home/dilan/.npm-global/bin:/home/dilan/.local/share/pnpm:/home/dilan/.rofi-translate:/home/dilan/.local/bin:/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/home/dilan/.local/share/flatpak/exports/bin:/var/lib/flatpak/exports/bin:/usr/bin/site_perl:/usr/bin/vendor_perl:/usr/bin/core_perl"
+
+[Install]
+WantedBy=default.target

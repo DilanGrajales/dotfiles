@@ -1,0 +1,1 @@
+ACTION=="add", SUBSYSTEM=="net", NAME=="enp0s13f0u2u1", RUN+="/usr/bin/ethtool -s enp0s13f0u2u1 wol g"

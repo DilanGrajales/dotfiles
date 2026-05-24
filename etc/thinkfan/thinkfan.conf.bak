@@ -1,0 +1,5 @@
+sensor /sys/class/thermal/thermal_zone0/temp
+sensor /sys/class/thermal/thermal_zone1/temp
+
+(5,     46,     60)
+(7,     61,     80)

@@ -1,0 +1,11 @@
+[Unit]
+Description=Enable Wake-on-LAN
+After=network.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/sbin/ethtool -s enp0s13f0u2u1 wol g  # Change enp0s31f6 to your interface
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target

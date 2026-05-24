@@ -1,0 +1,1 @@
+ACTION=="add", SUBSYSTEM=="net", NAME=="eth_monitor", RUN+="/usr/bin/ethtool -s eth_monitor wol g"

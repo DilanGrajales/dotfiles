@@ -1,182 +1,93 @@
-# Dotfiles para XMonad + Xmobar
+# dotfiles — XMonad + Arch Linux
 
-Este repositorio contiene los archivos de configuración necesarios para instalar y personalizar un entorno de escritorio basado en **XMonad** y **Xmobar** en Linux.
+Configuración completa de mi entorno XMonad en Arch Linux. Este repo se mantiene
+sincronizado via `backup.sh` y permite restaurar todo en una PC nueva con `bootstrap.sh`.
 
-## Requisitos
-
-- Linux (probado en distribuciones basadas en Arch)
-- [XMonad](https://xmonad.org/)
-- [Xmobar](https://xmobar.org/)
-- [Zsh](https://www.zsh.org/) (opcional, recomendado)
-- Otros programas sugeridos: `feh`, `rofi`, `kitty`, etc.
-
-## Instalación
-
-### Clona este repositorio
-
-```zsh
-git clone https://github.com/DilanGrajeles/dotfiles.git ~/dotfiles
-cd ~/dotfiles
-```
-
-### Instala XMonad, Xmobar y programas requeridos en la configuracion
-
-```zsh
-# Principal
-sudo pacman -S xmonad xmonad-contrib xmobar yay kitty
-
-# Programas secundarios necesarios
-yay -S rofi greenclip xclip scrot rofi-power-menu rofi-calc betterlockscreen google-chrome amixer brightnessctl thunderbird
+## Estructura
 
 ```
-
-### Copia los archivos de configuración
-
-Es importante copiar los siguientes directorios y archivos a tu home (`~`):
-
-```zsh
-cp -r .xmonad ~/
-cp -r .config ~/
-cp -r .local ~/
-cp .zshrc ~/
+~/
+├── backup.sh              # Respaldar sistema actual → repo
+├── bootstrap.sh           # Restaurar repo → PC nueva
+├── .bashrc, .xinitrc, .xprofile, .Xresources, .gitconfig, .fehbg, ...
+├── .config/               # dunst, kitty, rofi, xmobar, btop, pipewire, systemd, ...
+├── .xmonad/               # xmonad.hs, lib/Colors/, xmonadctl.hs
+├── .local/bin/            # scripts personalizados (29)
+├── .local/share/rofi/     # temas de rofi
+├── .screenlayout/         # layouts de monitores (10)
+├── etc/                   # respaldo de /etc/
+│   ├── grub               # /etc/default/grub
+│   ├── fstab              # /etc/fstab
+│   ├── pacman.conf        # /etc/pacman.conf
+│   ├── tlp/tlp.conf       # TLP power management
+│   ├── thinkfan/          # thinkfan.conf (control de ventilador)
+│   ├── throttled/         # throttled.conf (Intel throttling fix)
+│   ├── modprobe.d/        # módulos del kernel (nvidia, thinkpad_acpi, etc.)
+│   ├── udev/rules.d/      # reglas udev (WOL, rapl, low-battery)
+│   ├── sysctl.d/          # performance tuning
+│   ├── systemd/           # servicios personalizados (ollama, wol, etc.)
+│   ├── X11/xorg.conf.d/   # config de GPU NVidia, touchpad, teclado
+│   ├── default/earlyoom   # earlyoom config
+│   └── mkinitcpio.conf, locale.conf, hostname, hosts, environment...
+├── packages/
+│   ├── packages-official.txt  # 259 paquetes oficiales
+│   └── packages-aur.txt       # 32 paquetes AUR
+├── grub/themes/thinkpad/      # tema GRUB ThinkPad
+├── themes/README.md           # referencias a temas GTK/Kvantum (sin assets)
+└── .gitignore
 ```
 
-Si ya tienes archivos previos, haz un respaldo antes de sobrescribirlos.
+## Backup (sistema actual → repo)
 
-### Instala dependencias adicionales
-
-- Instala fuentes recomendadas (ejemplo: `otf-apple-fonts`, `nerd-fonts-sf-mono-ligatures` `ttf-font-awesome` `noto-fonts-emoji` ).
-- Instala otros programas que uses en tu configuración (`feh`, `rofi`, `tidal`, `emacs`, etc).
-
-### Inicia XMonad
-
-- Desde un gestor de sesiones, selecciona XMonad.
-
-### Configura grub
-
-#### Cambia la configuración de grub para seleccionar el boot menu
-
-1. Abrir el archivo grub
-
-    ```plaintext
-    .
-    ├── grub
-    │   ├── grub -> Modificar este archivo
-    │   └── themes/
-    ├── ...
-    ```
-
-2. Ubica el UUID de la particion de SWAP
-
-    ```zsh
-    lsblk -f
-    ```
-
-    ```plaintext
-    NAME        FSTYPE FSVER LABEL UUID                                 FSAVAIL FSUSE% MOUNTPOINTS
-    nvme0n1                                                                            
-    ├─nvme0n1p1 vfat   FAT32       98CC-4844                                           
-    ├─nvme0n1p2                                                                        
-    ├─nvme0n1p3 ntfs               121CD1CE1CD1ACCB                                    
-    ├─nvme0n1p4 ntfs               A4041A48041A1E3C                                    
-    ├─nvme0n1p5 vfat   FAT32       C84C-0675                             598.5M     0% /boot/efi
-    ├─nvme0n1p6 swap   1           961a57bd-c8c1-4044-8531-d703c266589e                [SWAP]     -- Copiar este UUID
-    ├─nvme0n1p7 ext4   1.0         3fe18c4e-325b-4684-862a-64707e4ca284   89.7G    17% /
-    └─nvme0n1p8 ext4   1.0         83a28f36-1b5d-4158-92b8-1b172554160b   85.2G    10% /home
-    ```
-
-3. Cambia la linea `GRUB_CMDLINE_LINUX_DEFAULT` para que no de error la hibernacion
-
-    Pega el UUID de la particion SWAP
-
-    ```plaintext
-    GRUB_CMDLINE_LINUX_DEFAULT='quiet ... resume=UUID=SWAP_UUID'
-    ```
-
-4. Mueve el archivo a `/etc/default/
-
-5. Compila los cambios para que se efectuen
-
-    ```zsh
-    sudo grub-mkconfig -o /boot/grub/grub.cfg
-    ```
-
-#### Temas
-
-Mueve la carpeta de `themes` dentro de grub al sistema
-
-```zsh
-sudo cp -r ./grub/themes/thinkpad/ /usr/share/grub/themes
+```bash
+./backup.sh
 ```
 
-### Temas del sistema
+Respaldar automaticamente:
+- Archivos de home, `.config/`, `.xmonad/`, scripts, layouts
+- Listas de paquetes (oficiales + AUR)
+- Configuraciones de sistema (`/etc/`: grub, fstab, pacman, tlp, thinkfan,
+  throttled, modprobe, udev, sysctl, X11, servicios systemd)
+- Tema GRUB thinkpad
+- Auto-commit con timestamp
 
-Mueve las carpetas correspondientes
+Nota: para `etc/` requiere sudo o su (el script hace fallback automatico).
 
-#### GTK
+## Restaurar (repo → PC nueva)
 
-1. Mueve la carpeta
+```bash
+./bootstrap.sh
+```
 
-    ```zsh
-    sudo cp -r ./themes/gtk/Graphite-blue-Dark-nord/ /usr/share/themes/
-    ```
+Instala paquetes, restaura configs de home y sistema, recompila xmonad,
+habilita servicios, y regenera GRUB.
 
-2. Selecciona el tema
+## Hardware
 
-    Ve a `lxappearance` y selecciona el tema
+- ThinkPad P1 Gen 4
+- NVIDIA + Intel GPU (optimus via nvidia-drm.modeset)
+- Dual NVMe SSDs
+- 4K display
 
-#### Kvantum
+## Paquetes clave
 
-1. Mueve la carpeta
-
-    ```zsh
-    cp -r ./themes/kvantum/Layan-solid/ /.local/share/themes/
-    ```
-
-2. Selecciona el tema
-
-    Ve a `kvantummanager` y selecciona el tema
-
-## Opciones de energia
-
-### Usar solo monitor con tapa cerrada
-
-#### Configurar servicio
-
-1. Abre las opciones de inicio
-
-    ```zsh
-    sudo nano /etc/systemd/logind.conf
-    ```
-
-2. Modifica la directiva de cierre de tapa
-
-    ```plaintext
-    ...
-    #HandleLidSwitchDocked=suspend -- antes
-
-    HandleLidSwitchDocked=ignore -- despues
-    ...
-    ```
-
-3. Reinicia el servicio
-
-    ```zsh
-    sudo systemctl restart systemd-logind.service
-    ```
-
-## Personalización
-
-- Modifica los archivos en `.xmonad/` para cambiar atajos, apariencia y comportamiento.
-- Edita `.config/xmobar/` para personalizar la barra de estado.
-- Cambia `.zshrc` para personalizar tu shell.
+| Categoría | Paquetes |
+|-----------|----------|
+| WM | xmonad, xmonad-contrib, xmobar |
+| Terminal | kitty |
+| Launcher | rofi, rofi-calc, rofi-power-menu |
+| Notificaciones | dunst |
+| Compositor | picom-ftlabs-git (AUR) |
+| Clipboard | greenclip (AUR), clipmenu |
+| Power | tlp, thinkfan, throttled-git (AUR), earlyoom |
+| GTK Theme | Graphite-blue-Dark-nord |
+| Shell | zsh |
+| Audio | pipewire, pipewire-pulse, easyeffects |
+| NVIDIA | nvidia-dkms, nvidia-utils, nvidia-settings |
 
 ## Notas
 
-- Si tienes problemas con la configuración, revisa los logs de XMonad y Xmobar.
-- Puedes adaptar estos archivos a tus necesidades.
-
----
-
-**Autor:** Dilan Grajales
-**Repositorio:** <https://github.com/DlanGrajales/dotfiles>
+- `.xmonad/` es la config activa (sin symlinks). `backup.sh` sincroniza.
+- Los temas GTK/Kvantum no estan en el repo (solo referencias). Se instalan
+  via AUR/pacman.
+- Para hacer backup en el futuro: solo corre `./backup.sh`

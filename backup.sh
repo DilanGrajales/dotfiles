@@ -74,19 +74,83 @@ _run_as_root() {
   fi
 }
 
+_cp() { [ -f "$1" ] && _run_as_root cp "$1" "$2"; }
+_rsync_dir() { [ -d "$1" ] && _run_as_root rsync -a --delete "$1/" "$2/"; }
+
 backup_system() {
   echo "[9/10] Configuraciones de sistema (sudo)..."
   _run_as_root mkdir -p "$DOTFILES/etc" || return
+
+  # Boot
   _run_as_root cp /etc/default/grub "$DOTFILES/etc/grub"
   _run_as_root cp /etc/fstab "$DOTFILES/etc/fstab"
+
+  # Pacman
   _run_as_root cp /etc/pacman.conf "$DOTFILES/etc/pacman.conf"
-  _run_as_root chown -R "$USER:$USER" "$DOTFILES/etc"
+
+  # System basics
+  _run_as_root cp /etc/environment "$DOTFILES/etc/environment" 2>/dev/null
+  _run_as_root cp /etc/hostname "$DOTFILES/etc/hostname" 2>/dev/null
+  _run_as_root cp /etc/hosts "$DOTFILES/etc/hosts" 2>/dev/null
+  _run_as_root cp /etc/locale.conf "$DOTFILES/etc/locale.conf" 2>/dev/null
+  _run_as_root cp /etc/locale.gen "$DOTFILES/etc/locale.gen" 2>/dev/null
+  _run_as_root cp /etc/mkinitcpio.conf "$DOTFILES/etc/mkinitcpio.conf" 2>/dev/null
+  _run_as_root cp /etc/resolv.conf "$DOTFILES/etc/resolv.conf" 2>/dev/null
+
+  # Power management
+  _run_as_root mkdir -p "$DOTFILES/etc/tlp"
+  _cp /etc/tlp.conf "$DOTFILES/etc/tlp/tlp.conf"
+  _run_as_root mkdir -p "$DOTFILES/etc/thinkfan"
+  _cp /etc/thinkfan.conf "$DOTFILES/etc/thinkfan/thinkfan.conf"
+  _cp /etc/thinkfan.conf.bak "$DOTFILES/etc/thinkfan/thinkfan.conf.bak"
+  _run_as_root mkdir -p "$DOTFILES/etc/throttled"
+  _cp /etc/throttled.conf "$DOTFILES/etc/throttled/throttled.conf"
+  _run_as_root mkdir -p "$DOTFILES/etc/default"
+  _cp /etc/default/earlyoom "$DOTFILES/etc/default/earlyoom"
+
+  # ZRAM
+  _run_as_root mkdir -p "$DOTFILES/etc/systemd"
+  _cp /etc/systemd/zram-generator.conf "$DOTFILES/etc/systemd/zram-generator.conf"
+
+  # Modprobe
+  _rsync_dir /etc/modprobe.d "$DOTFILES/etc/modprobe.d"
+
+  # Udev rules
+  _rsync_dir /etc/udev/rules.d "$DOTFILES/etc/udev/rules.d"
+
+  # Sysctl
+  _rsync_dir /etc/sysctl.d "$DOTFILES/etc/sysctl.d"
+
+  # Systemd services custom
+  _rsync_dir /etc/systemd/system "$DOTFILES/etc/systemd/system"
+
+  # X11
+  _rsync_dir /etc/X11/xorg.conf.d "$DOTFILES/etc/X11/xorg.conf.d"
+
+  # Nvidia
+  _cp /etc/nvidia.conf "$DOTFILES/etc/nvidia.conf"
+
+  # Pipewire system
+  _run_as_root mkdir -p "$DOTFILES/etc/pipewire"
+  _cp /etc/pipewire/pipewire.conf "$DOTFILES/etc/pipewire/pipewire.conf"
+  _cp /etc/pipewire/pipewire-pulse.conf "$DOTFILES/etc/pipewire/pipewire-pulse.conf"
+
+  # LightDM
+  _run_as_root mkdir -p "$DOTFILES/etc/lightdm"
+  _cp /etc/lightdm/lightdm.conf "$DOTFILES/etc/lightdm/lightdm.conf"
+
+  # Pacman hooks
+  _rsync_dir /etc/pacman.d/hooks "$DOTFILES/etc/pacman.d/hooks"
+
+  # GRUB theme
   _run_as_root rsync -a --delete /usr/share/grub/themes/thinkpad/ "$DOTFILES/grub/themes/thinkpad/"
+
+  _run_as_root chown -R "$USER:$USER" "$DOTFILES/etc"
   _run_as_root chown -R "$USER:$USER" "$DOTFILES/grub"
 }
 
 update_themes_readme() {
-  echo "[10/10] Referencias de temas..."
+  echo "[11/11] Referencias de temas..."
   mkdir -p "$DOTFILES/themes"
   cat > "$DOTFILES/themes/README.md" << 'EOF'
 # Temas

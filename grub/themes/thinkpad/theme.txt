@@ -15,8 +15,8 @@ terminal-border: "0"
 
 # Logo image
 + image {
-	left = 50%-384
-	top = 50%-200
+	left = 50%-219
+	top = 50%-150
     file = "thinkpad-ibm.png"
 }
 

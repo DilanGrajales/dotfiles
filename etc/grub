@@ -1,0 +1,33 @@
+GRUB_DEFAULT=saved
+GRUB_SAVEDEFAULT=true
+
+# Mantenemos los 3 segundos, pero quitamos el estilo menú para que no espere 
+# a cargar elementos visuales pesados antes de la cuenta atrás
+GRUB_TIMEOUT_STYLE=menu
+GRUB_TIMEOUT=3
+GRUB_DISTRIBUTOR="ThinkPad P1"
+
+# Cargamos solo lo necesario para GPT
+GRUB_PRELOAD_MODULES="part_gpt"
+
+# OPTIMIZACIÓN DE KERNEL:
+# Añadí 'fastboot' y 'nvme_load=1' para acelerar el inicio en tus dual SSD
+GRUB_CMDLINE_LINUX_DEFAULT="quiet splash loglevel=3 rd.systemd.show_status=auto rd.udev.log_priority=3 mitigations=off nowatchdog vt.global_cursor_default=0 pcie_port_pm=off mem_sleep_default=deep i915.enable_psr=0 i915.fastboot=1 nvidia-drm.modeset=1 thunderbolt.pcie_aspm=0 intel_iommu=on patch_dtb nvidia.NVreg_PreserveVideoMemoryAllocations=1 resume=UUID=cb17ca3f-3e23-4cd3-b62f-5f203064bf5e"
+
+GRUB_TERMINAL_INPUT=console
+
+# RESOLUCIÓN 4K NATIVA:
+# Al ponerlo en 3840x2160, el menú se verá mucho más pequeño y fino (High DPI).
+# Añadimos 'auto' como fallback para seguridad.
+GRUB_GFXMODE=1024x768,auto
+GRUB_GFXPAYLOAD_LINUX=keep
+
+GRUB_DISABLE_RECOVERY=true
+GRUB_DISABLE_OS_PROBER=true
+
+# Colores ThinkPad
+GRUB_COLOR_NORMAL="light-gray/black"
+GRUB_COLOR_HIGHLIGHT="red/black"
+
+# Tema (Asegúrate de que el tema soporte 4K o las fuentes serán minúsculas)
+GRUB_THEME="/usr/share/grub/themes/thinkpad/theme.txt"

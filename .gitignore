@@ -1,0 +1,21 @@
+# Embedded git repos
+.local/bin/hi-fi-pipewire/
+
+# History files
+.zhistory
+.zsh_history
+
+# Build artifacts
+.xmonad/build-x86_64-linux/
+.xmonad/*.o
+.xmonad/*.hi
+.xmonad/xmonad-x86_64-linux
+.xmonad/xmonad.errors
+
+# Cache and temp
+.cache/
+.Cache/
+**/__pycache__/
+*.swp
+*.swo
+*~

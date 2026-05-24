@@ -59,20 +59,30 @@ backup_packages() {
   pacman -Qqem > "$DOTFILES/packages/packages-aur.txt"
 }
 
+_run_as_root() {
+  if sudo -n true 2>/dev/null; then
+    sudo "$@"
+  elif command -v su &>/dev/null; then
+    echo "  sudo no disponible (no TTY), intentando con su..."
+    read -r -s -p "  Password: " root_pass
+    echo
+    echo "$root_pass" | su -c "$*"
+    unset root_pass
+  else
+    echo "  SKIP: no se pudo obtener privilegios"
+    return 1
+  fi
+}
+
 backup_system() {
   echo "[9/10] Configuraciones de sistema (sudo)..."
-  if sudo -n true 2>/dev/null; then
-    sudo mkdir -p "$DOTFILES/etc"
-    sudo cp /etc/default/grub "$DOTFILES/etc/grub"
-    sudo cp /etc/fstab "$DOTFILES/etc/fstab"
-    sudo cp /etc/pacman.conf "$DOTFILES/etc/pacman.conf"
-    sudo chown -R "$USER:$USER" "$DOTFILES/etc"
-    sudo rsync -a --delete /usr/share/grub/themes/thinkpad/ "$DOTFILES/grub/themes/thinkpad/"
-    sudo chown -R "$USER:$USER" "$DOTFILES/grub"
-  else
-    echo "  SKIP: sudo requiere password. Ejecuta manual:"
-    echo "    backup_system() { ... }"
-  fi
+  _run_as_root mkdir -p "$DOTFILES/etc" || return
+  _run_as_root cp /etc/default/grub "$DOTFILES/etc/grub"
+  _run_as_root cp /etc/fstab "$DOTFILES/etc/fstab"
+  _run_as_root cp /etc/pacman.conf "$DOTFILES/etc/pacman.conf"
+  _run_as_root chown -R "$USER:$USER" "$DOTFILES/etc"
+  _run_as_root rsync -a --delete /usr/share/grub/themes/thinkpad/ "$DOTFILES/grub/themes/thinkpad/"
+  _run_as_root chown -R "$USER:$USER" "$DOTFILES/grub"
 }
 
 update_themes_readme() {

@@ -1,0 +1,59 @@
+Config
+  { font = "SF Pro Display semibold 14"
+  , additionalFonts =
+      [ "Mononoki 14"                                -- fn=1
+      , "Font Awesome 6 Free Solid 14"               -- fn=2
+      , "Font Awesome 6 Brands 14"                   -- fn=3
+      ]
+  , bgColor = "#2e3440"
+  , fgColor = "#abb2bf"
+  , alpha = 0
+  , position = TopSize L 100 48
+  , lowerOnStart = True
+  , hideOnStart = False
+  , allDesktops = True
+  , persistent = True
+  , iconRoot = ".xmonad/xpm/"
+  , commands =
+      [ Run Com "echo" ["<fc=#abb2bf><fn=2>\xf0f3</fn></fc>"] "penguin" 3600
+      , Run Com ".local/bin/pacupdate" [] "pacupdate" 36000
+      
+      -- CPU y Temperaturas (Ajustado para Intel i7-11850H)
+      , Run Cpu [ "-t", "<fc=#abb2bf><fn=2>\xf2db</fn></fc> <total>%", "-H", "50", "--high", "red" ] 50
+      , Run MultiCoreTemp [ "-t", "<fc=#abb2bf><fn=2>\xf2c9</fn></fc> <avg>°C"
+                          , "-L", "45", "-H", "75"
+                          , "--high", "red"
+                          ] 50
+      
+      , Run Memory ["-t", "<fc=#abb2bf><fn=2>\xf538</fn></fc> <usedratio>%"] 50
+      
+      -- Monitoreo de Unidades (NVMe principal + Docker en Samsung 980 Pro)
+      -- Unidad Principal
+      , Run DiskU [("/", "<fc=#abb2bf><fn=2>\xf0a0</fn></fc> <usedp>%")] ["-L", "20", "-H", "50", "-m", "1", "-p", "3"] 3600
+      -- Unidad Docker
+      , Run DiskU [("/mnt/docker_work", "<fc=#abb2bf><fn=3>\xf308</fn></fc> <usedp>%")] ["-L", "20", "-H", "50", "-m", "1", "-p", "3"] 3600
+      
+      , Run Com "sh" ["-c", "echo \"<fc=#abb2bf><fn=2>\xf185</fn></fc> $(brightnessctl -m | awk -F, '{print $4}')\""] "bright" 2
+      
+      , Run Battery [ "-t", "<acstatus> <left>"
+                    , "--", "-O", "<fc=#abb2bf><fn=2>\xf0e7</fn></fc>"
+                    , "-i", "<fc=#e5c07b><fn=2>\xf0e7</fn></fc>"
+                    , "-o", ""
+                    , "-L", "20", "-l", "red"
+                    , "-H", "80", "-h", "green"
+                    , "-p", "green"
+                    , "-f", "ACAD/online"
+                    , "-P"
+                    , "--lows", "<fc=#e06c75><fn=2>\xf243</fn></fc>"
+                    , "--mediums", "<fc=#e5c07b><fn=2>\xf242</fn></fc>"
+                    , "--highs", "<fc=#abb2bf><fn=2>\xf240</fn></fc>" 
+                    ] 25
+      
+      , Run Com "/bin/bash" [".config/xmobar/get-volume.sh"] "volume" 2
+      , Run Date "<fc=#abb2bf><fn=2>\xf783</fn></fc>  %b %d - %H:%M " "date" 50
+      , Run UnsafeStdinReader
+      ]
+  , sepChar = "%"
+  , alignSep = "}{"
+  , template = " <action=`rofi -show p -modi p:rofi-power-menu`><icon=haskell_20.xpm/></action>  <fc=#abb2bf>|</fc> %UnsafeStdinReader% }{ <action=`kitty -e sudo pacman -Syu`>%penguin% %pacupdate%</action>   <action=`kitty -e btop`>%cpu%</action>   <action=`kitty -e watch sensors`>%multicoretemp%</action>   <action=`kitty -e btop`>%memory%</action>   <action=`kitty -e ncdu /mnt/docker_work`>%disku%</action>   <action=`pavucontrol`>%bright%</action>   %battery%   <action=pavucontrol>%volume%</action>   <action=`yad --calendar --undecorated --fixed --close-on-unfocus --no-buttons`>%date%</action> "
+  }

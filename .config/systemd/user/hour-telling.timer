@@ -1,0 +1,11 @@
+[Unit]
+Description=Ejecutar el anuncio de hora cada 10 minutos
+
+[Timer]
+# Esperar 1 minuto después de arrancar para la primera vez
+OnBootSec=1m
+# Repetir cada 10 minutos después de la última ejecución
+OnUnitActiveSec=10m
+
+[Install]
+WantedBy=timers.target

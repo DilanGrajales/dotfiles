@@ -1,0 +1,58 @@
+#!/usr/bin/env bash
+# music-cli con autodetección de Apple Music (Chromium/Electron)
+# Comandos: play | pause | playpause | next | previous | info | status
+
+# 1) Si el usuario forzó un player, úsalo.
+if [ -n "$MUSIC_PLAYER" ]; then
+  CANDIDATE="$MUSIC_PLAYER"
+else
+  # 2) Busca un player cuyo dominio sea music.apple.com o identidad contenga "Apple Music"
+  for p in $(playerctl -l 2>/dev/null); do
+    ident="$(playerctl -p "$p" metadata --format '{{mpris:identity}}' 2>/dev/null)"
+    url="$(playerctl -p "$p" metadata --format '{{xesam:url}}' 2>/dev/null)"
+    if echo "$ident" | grep -qi "Apple Music"; then
+      CANDIDATE="$p"; break
+    fi
+    if echo "$url" | grep -qi "music.apple.com"; then
+      CANDIDATE="$p"; break
+    fi
+  done
+fi
+
+pc() {
+  if [ -n "$CANDIDATE" ]; then
+    playerctl -p "$CANDIDATE" "$@"
+  else
+    # fallback a playerctld (reproductor activo)
+    playerctl "$@"
+  fi
+}
+
+case "$1" in
+  play)        pc play       >/dev/null 2>&1 ;;
+  pause)       pc pause      >/dev/null 2>&1 ;;
+  playpause)   pc play-pause >/dev/null 2>&1 ;;
+  next)        pc next       >/dev/null 2>&1 ;;
+  previous)    pc previous   >/dev/null 2>&1 ;;
+  info)
+    title="$(pc metadata --format '{{title}}' 2>/dev/null)"
+    artist="$(pc metadata --format '{{artist}}' 2>/dev/null)"
+    if [ -z "$title$artist" ]; then
+      echo "No music info available"
+    else
+      echo "${title:-Unknown} - ${artist:-Unknown}"
+    fi
+    ;;
+  status)
+    st="$(pc status 2>/dev/null || echo Stopped)"
+    case "$st" in
+      Playing) echo "playing" ;;
+      Paused)  echo "paused" ;;
+      *)       echo "stopped" ;;
+    esac
+    ;;
+  *)
+    echo "music-cli doesn't know this command"
+    exit 1 ;;
+esac
+

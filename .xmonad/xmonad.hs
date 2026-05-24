@@ -26,9 +26,11 @@ import qualified Data.Map as M
 
     -- Hooks
 import XMonad.Hooks.DynamicLog (dynamicLogWithPP, wrap, xmobarPP, xmobarColor, shorten, PP(..))
+import XMonad.Hooks.OnPropertyChange
 import XMonad.Hooks.EwmhDesktops  -- for some fullscreen events, also for xcomposite in obs.
 import XMonad.Hooks.ManageDocks
-import XMonad.Hooks.ManageHelpers (isFullscreen, doFullFloat, doCenterFloat)
+import Data.List (isInfixOf, isSuffixOf)
+import XMonad.Hooks.ManageHelpers (isFullscreen, doFullFloat, doCenterFloat, isDialog)
 import XMonad.Hooks.ServerMode
 import XMonad.Hooks.StatusBar.PP -- new
 import XMonad.Hooks.SetWMName
@@ -85,7 +87,8 @@ myTerminal :: String
 myTerminal = "kitty"    -- Sets default terminal
 
 myBrowser :: String
-myBrowser = "google-chrome-stable --force-device-scale-factor=1.5"  -- Sets google-chrome as browser
+--myBrowser = "google-chrome-stable --force-device-scale-factor=1"  -- Sets google-chrome as browser
+myBrowser = "zen-browser"
 
 -- myEmacs :: String
 -- myEmacs = "emacsclient -c -a 'emacs' "  -- Makes emacs keybindings easier to type
@@ -95,10 +98,10 @@ myBrowser = "google-chrome-stable --force-device-scale-factor=1.5"  -- Sets goog
 -- myEditor = myTerminal ++ " -e vim "    -- Sets vim as editor
 
 myBorderWidth :: Dimension
-myBorderWidth = 1           -- Sets border width for windows
+myBorderWidth = 2           -- Sets border width for windows
 
 myNormColor :: String       -- Border color of normal windows
-myNormColor   = color01   -- This variable is imported from Colors.THEME
+myNormColor   = color09   -- This variable is imported from Colors.THEME
 
 myFocusColor :: String      -- Border color of focused windows
 myFocusColor  = color04     -- This variable is imported from Colors.THEME
@@ -108,24 +111,13 @@ windowCount = gets $ Just . show . length . W.integrate' . W.stack . W.workspace
 
 myStartupHook :: X ()
 myStartupHook = do
+--    spawnOnce "sh ~/.screenlayout/smart_dual_monitor.sh && sleep 2 && picom -b"
+    spawnOnce "sh ~/.screenlayout/2k-monitor.sh"
+    spawnOnce "xset r rate 200 40"
     spawn "killall conky"   -- kill current conky on each restart
     spawn "greenclip daemon" -- start rofi-clipboard service
-    --spawnOnce "xrandr --auto --output DP-1 --mode 3840x2160 -r 60 --above eDP-1"
-    spawnOnce "sh ~/.screenlayout/single_external_monitor.sh"
-    -- spawnOnce "discord"
-    spawnOnce "google-chrome-stable --force-device-scale-factor=1.5"
-    spawnOnce "picom &"
-    spawnOnce "nm-applet"
-    spawnOnce "volumeicon"
-    -- spawnOnce "thunderbird"
-    spawnOnce "tidal-hifi"
-    -- spawnOnce "/usr/bin/emacs --daemon" -- emacs daemon for the emacsclient
-
-    -- spawn ("sleep 2 && conky -c $HOME/.config/conky/xmonad/" ++ colorScheme ++ "-01.conkyrc")
-    -- spawn ("sleep 2 && trayer --edge top --align right --widthtype request --padding 6 --SetDockType true --SetPartialStrut true --expand true --monitor 1 --transparent true --alpha 0 " ++ colorTrayer ++ " --height 22")
-
-    -- spawnOnce "xargs xwallpaper --stretch < ~/.cache/wall"
-    spawnOnce "feh --bg-fill --no-fehbg /usr/share/backgrounds/od_tux.png"  -- set last saved feh wallpaper
+    spawnOnce "dunst &"
+    -- spawnOnce "sh ~/.fehbg &"  -- set last saved feh wallpaper
     setWMName "LG3D"
 
 myColorizer :: Window -> Bool -> X (String, String)
@@ -159,6 +151,7 @@ spawnSelected' lst = gridselect conf lst >>= flip whenJust spawn
                    }
 
 myAppGrid = [ ("VS Code", "code")
+		 , ("Antigravity", "antigravity")
                  , ("Bluetooth", "blueman-manager")
                  -- , ("Equalizador", "pulseaudio-equalizer-gtk")
                  , ("Sonidos", "pavucontrol")
@@ -172,7 +165,8 @@ myAppGrid = [ ("VS Code", "code")
                  -- , ("Kdenlive", "kdenlive") -- Editor de video
                  , ("OBS", "obs")
                  , ("Thunar", "thunar")
-                 , ("Gimp", "gimp")
+                 , ("Inkscape", "inkscape")
+                 , ("Timeshift", "sudo timeshift-gtk")
                  ]
 
 myScratchPads :: [NamedScratchpad]
@@ -291,7 +285,7 @@ myTabTheme = def { fontName            = myFont
                  , activeColor         = color04
                  , inactiveColor       = color05
                  , activeBorderColor   = color04
-                 , inactiveBorderColor = colorBack
+                 , inactiveBorderColor = color08
                  , activeTextColor     = color08
                  , inactiveTextColor   = color05
                  }
@@ -306,7 +300,7 @@ myShowWNameTheme = def
     }
 
 -- The layout hook
-myLayoutHook = avoidStruts $ mouseResize $ windowArrange $ T.toggleLayouts floats
+myLayoutHook = avoidStruts $ mouseResize $ T.toggleLayouts floats
                $ mkToggle (NBFULL ?? NOBORDERS ?? EOT) myDefaultLayout
              where
                myDefaultLayout =     withBorder myBorderWidth tall
@@ -322,58 +316,85 @@ myLayoutHook = avoidStruts $ mouseResize $ windowArrange $ T.toggleLayouts float
                                  ||| wideAccordion
 
 -- myWorkspaces = [" 1 ", " 2 ", " 3 ", " 4 ", " 5 ", " 6 ", " 7 ", " 8 ", " 9 "]
-myWorkspaces = [" DOC ", " WWW ", " DEV ", " TEST ", " DB ", " SYS ", " CHAT ", " GFX ", " MAIL "]
+myWorkspaces = [" DOC ", " WWW ", " DEV ", " TERM ", " DB ", " SYS ", " CHAT ", " GFX ", " MAIL "]
 myWorkspaceIndices = M.fromList $ zipWith (,) myWorkspaces [1..] -- (,) == \x y -> (x,y)
 
 clickable ws = "<action=xdotool key super+"++show i++">"++ws++"</action>"
     where i = fromJust $ M.lookup ws myWorkspaceIndices
 
+myTitleHook :: XMonad.Query (Data.Monoid.Endo WindowSet)
+myTitleHook = composeAll
+      [ fmap (isInfixOf "Manager") title --> doCenterFloat
+      , fmap (isInfixOf "Sign in") title --> doCenterFloat
+      , fmap (isInfixOf "Sign In") title --> doCenterFloat
+      , fmap (isInfixOf "Iniciar") title --> doCenterFloat
+      , fmap (isInfixOf "Login") title --> doCenterFloat
+      , fmap (isInfixOf "Acceso") title --> doCenterFloat
+      , fmap (isInfixOf "Authorize") title --> doCenterFloat
+      ]
+
 myManageHook :: XMonad.Query (Data.Monoid.Endo WindowSet)
 myManageHook = composeAll
-     -- 'doFloat' forces a window to float.  Useful for dialog boxes and such.
-     -- using 'doShift ( myWorkspaces !! 7)' sends program to workspace 8!
-     -- I'm doing it this way because otherwise I would have to write out the full
-     -- name of my workspaces and the names would be very long if using clickable workspaces.
-     [ className =? "confirm"         --> doFloat
-     , className =? "file_progress"   --> doFloat
-     , className =? "dialog"          --> doFloat
-     , className =? "download"        --> doFloat
-     , className =? "error"           --> doFloat
-     , className =? "notification"    --> doFloat
-     , className =? "pinentry-gtk-2"  --> doFloat
-     , className =? "splash"          --> doFloat
-     , className =? "toolbar"         --> doFloat
-     , className =? "gcolor3"         --> doFloat
-     , className =? "pavucontrol"     --> doCenterFloat
-     , title =? "Control de volumen"  --> doCenterFloat
-     , title =? "Dispositivos Bluetooth"  --> doCenterFloat
-     , title =? "Selector de color"   --> doFloat
-     , className =? "sticky-notes"    --> doFloat
-     , title =? "Sticky Notes"        --> doFloat
-     , className =? "pomatez"         --> doFloat
-     , title =? "Pomatez"             --> doFloat
-     , className =? "Yad"             --> doCenterFloat
-     , title =? "AnyDesk Chat"	      --> doCenterFloat
-     , title =? "Acceso: Cuentas de Google - Google Chrome"	      --> doCenterFloat
-     , className =? "google-chrome-stable"   --> doShift ( myWorkspaces !! 1 )
-     , className =? "discord"         --> doShift ( myWorkspaces !! 6 )
-     , className =? "tidal-hifi"     --> doShift ( myWorkspaces !! 6 )
-     , title =? "Dbeaver" 	      --> doShift ( myWorkspaces !! 4 )
-     , className =? "thunderbird"     --> doShift ( myWorkspaces !! 8 )
-     , isFullscreen 		      -->  doFullFloat
-     -- Development
-     , title =? "Visual Studio Code"  --> doShift ( myWorkspaces !! 2 )
-     , title =? "Cypress"             --> doShift (myWorkspaces !! 4 )
-     -- Gimp
-     , title =? "Programa de manipulación de imágenes de GNU"   --> doShift ( myWorkspaces !! 7 )
-     , title =? "Cambiar el color de primer plano"      	--> doCenterFloat
-     , title =? "Cambiar el color de fondo"      		--> doCenterFloat
-     , title =? "Color del texto"			 	--> doCenterFloat
-     , title =? "Cambiar el color del texto seleccionado" 	--> doCenterFloat
-     , title =? "Exportar la imagen"			      	--> doCenterFloat
-     , title =? "Salir de GIMP"			      		--> doCenterFloat
-     ] <+> namedScratchpadManageHook myScratchPads
-
+      -- 'doFloat' forces a window to float.  Useful for dialog boxes and such.
+      -- using 'doShift ( myWorkspaces !! 7)' sends program to workspace 8!
+      -- I'm doing it this way because otherwise I would have to write out the full
+      -- name of my workspaces and the names would be very long if using clickable workspaces.
+      [ className =? "confirm"         --> doFloat
+      , className =? "file_progress"   --> doFloat
+      , className =? "dialog"          --> doFloat
+      , className =? "download"        --> doFloat
+      , className =? "error"           --> doFloat
+      , className =? "notification"    --> doFloat
+      , className =? "pinentry-gtk-2"  --> doFloat
+      , className =? "splash"          --> doFloat
+      , className =? "toolbar"         --> doFloat
+      , className =? "gcolor3"         --> doFloat
+      , className =? "pavucontrol"      --> doCenterFloat
+      , title =? "Control de volumen"   --> doCenterFloat
+      , title =? "Progreso de las operaciones de archivo"   --> doCenterFloat
+      , title =? "Dispositivos Bluetooth"   --> doCenterFloat
+      , title =? "Selector de color"    --> doFloat
+      , className =? "sticky-notes"     --> doFloat
+      , title =? "Sticky Notes"         --> doFloat
+      , title =? "Picture-in-Picture"   --> doFloat
+      , className =? "pomatez"          --> doFloat
+      , title =? "Pomatez"              --> doFloat
+      , className =? "Yad"              --> doCenterFloat
+      , title =? "AnyDesk Chat"         --> doCenterFloat
+      , title =? "Acceso: Cuentas de Google"          --> doCenterFloat
+      , fmap (isInfixOf "Manager") title --> doCenterFloat
+      , fmap (isInfixOf "Sign in") title --> doCenterFloat
+      , fmap (isInfixOf "Sign In") title --> doCenterFloat
+      , fmap (isInfixOf "Iniciar") title --> doCenterFloat
+      , fmap (isInfixOf "Login") title --> doCenterFloat
+      , fmap (isInfixOf "Acceder") title --> doCenterFloat
+      , fmap (isInfixOf "Authorize") title --> doCenterFloat
+      , className =? "zen-browser"    --> doShift ( myWorkspaces !! 1 )
+      , className =? "discord"          --> doShift ( myWorkspaces !! 6 )
+      , className =? "tidal-hifi"       --> doShift ( myWorkspaces !! 6 )
+      , title =? "Dbeaver"              --> doShift ( myWorkspaces !! 4 )
+      , className =? "thunderbird"      --> doShift ( myWorkspaces !! 8 )
+      , isFullscreen                    -->  doFullFloat
+      
+      -- Custom Rules
+--      , title >>= \t -> return (matchMeet t) --> doFloat
+--      , title >>= \t -> return (matchRename t) --> doCenterFloat
+      , title =? "Open folder"      --> doCenterFloat
+      , title =? "Meet"                               --> doFloat
+      , isDialog                                      --> doCenterFloat
+      , fmap ("Meet" `isInfixOf`) title        	      --> doFloat
+      , fmap ("Rename" `isInfixOf`) title             --> doCenterFloat
+      
+      -- Development
+      , title =? "Visual Studio Code"   --> doShift ( myWorkspaces !! 2 )
+      , title =? "Antigravity"   --> doShift ( myWorkspaces !! 2 )
+      -- , title =? "Cypress"              --> doShift (myWorkspaces !! 4 )
+      -- Gimp
+      , className =? "inkscape"    --> doShift ( myWorkspaces !! 7 )
+      ] <+> namedScratchpadManageHook myScratchPads
+--  where
+--    matchMeet t = ("Meet" `isInfixOf` t) && not (" - Google Chrome" `isSuffixOf` t)
+--    matchRename t = "Renombrar" `isInfixOf` t
 -- START_KEYS
 myKeys :: [(String, X ())]
 myKeys =
@@ -392,35 +413,38 @@ myKeys =
 	, ("M-S-w", spawn "wifimenu") --rofi wifimenu
 	, ("M-S-e", spawn "rofi -show calc -modi calc -no-show-match -no-sort") --rofi calc
 	, ("M-x", spawn "rofi -show p -modi p:rofi-power-menu") --rofi powermenu
-	, ("M-S-t", spawn "rofi_trans verbose") --rofi translator
+	, ("M-S-t", spawn "rofi-translate-copy") --rofi translator
+	, ("M-S-g", spawn "gemini-chat") -- rofi gemini chat
 
     -- KB_GROUP Run rofi-greenclip
     	, ("M-v", spawn "rofi -modi 'clipboard:greenclip print' -show clipboard -run-command '{cmd}'") -- print clipboard history
+    	--, ("M-v", spawn "clipmenu") -- print clipboard history
+
 
     -- KB_GROUP Other Dmenu Prompts
     -- In Xmonad and many tiling window managers, M-p is the default keybinding to
     -- launch dmenu_run, so I've decided to use M-p plus KEY for these dmenu scripts.
-        , ("M-p h", spawn "dm-hub")           -- allows access to all dmscripts
-        , ("M-p a", spawn "dm-sounds")        -- choose an ambient background
-        , ("M-p b", spawn "dm-setbg")         -- set a background
-        , ("M-p c", spawn "dtos-colorscheme") -- choose a colorscheme
-        , ("M-p C", spawn "dm-colpick")       -- pick color from our scheme
-        , ("M-p e", spawn "dm-confedit")      -- edit config files
-        , ("M-p i", spawn "dm-maim")          -- screenshots (images)
-        , ("M-p k", spawn "dm-kill")          -- kill processes
-        , ("M-p m", spawn "dm-man")           -- manpages
-        , ("M-p n", spawn "dm-note")          -- store one-line notes and copy them
-        , ("M-p o", spawn "dm-bookman")       -- qutebrowser bookmarks/history
-        , ("M-p p", spawn "passmenu -p \"Pass: \"") -- passmenu
-        , ("M-p q", spawn "dm-logout")        -- logout menu
-        , ("M-p r", spawn "dm-radio")         -- online radio
-        , ("M-p s", spawn "dm-websearch")     -- search various search engines
-        , ("M-p t", spawn "dm-translate")     -- translate text (Google Translate)
+--        , ("M-p h", spawn "dm-hub")           -- allows access to all dmscripts
+--        , ("M-p a", spawn "dm-sounds")        -- choose an ambient background
+--        , ("M-p b", spawn "dm-setbg")         -- set a background
+--        , ("M-p c", spawn "dtos-colorscheme") -- choose a colorscheme
+--        , ("M-p C", spawn "dm-colpick")       -- pick color from our scheme
+--        , ("M-p e", spawn "dm-confedit")      -- edit config files
+--        , ("M-p i", spawn "dm-maim")          -- screenshots (images)
+--        , ("M-p k", spawn "dm-kill")          -- kill processes
+--        , ("M-p m", spawn "dm-man")           -- manpages
+--        , ("M-p n", spawn "dm-note")          -- store one-line notes and copy them
+--        , ("M-p o", spawn "dm-bookman")       -- qutebrowser bookmarks/history
+--        , ("M-p p", spawn "passmenu -p \"Pass: \"") -- passmenu
+--        , ("M-p q", spawn "dm-logout")        -- logout menu
+--        , ("M-p r", spawn "dm-radio")         -- online radio
+--        , ("M-p s", spawn "dm-websearch")     -- search various search engines
+--        , ("M-p t", spawn "dm-translate")     -- translate text (Google Translate)
 
     -- KB_GROUP Useful programs to have a keybinding for launch
         , ("M-<Return>", spawn (myTerminal))
         , ("M-b", spawn (myBrowser))
-	, ("C-e", spawn "pcmanfm")
+	, ("C-e", spawn "thunar")
         , ("M-M1-h", spawn (myTerminal ++ "htop"))
 
     -- KB_GROUP Kill windows
@@ -467,7 +491,11 @@ myKeys =
    -- KB_GROUP Custom
     	, ("M-<XF86AudioPlay>", spawn "tidal-hifi")         -- Open Tidal HiFi
     	, ("<XF86Calculator>", spawn "rofi -show calc")     -- Open Calc
-	, ("<XF86ScreenSaver>", spawn "betterlockscreen -l dimblur")
+        , ("<XF86ScreenSaver>", spawn "betterlockscreen -l dimblur")
+        , ("<XF86Display>", spawn "arandr")
+	, ("M-p", spawn "check_thermal")
+	, ("M-u t", spawn "sudo timeshift-gtk")   -- Timeshift snapshots
+   -- Requiere 'xclip' y 'dunst' o 'libnotify'
 
    -- Brightness
     	, ("<XF86MonBrightnessUp>", spawn "brightnesscontrol.sh i") -- Brightness Up
@@ -524,9 +552,9 @@ myKeys =
         -- , ("M-e a", spawn (myEmacs ++ ("--eval '(emms)' --eval '(emms-play-directory-tree \"~/Music/\")'")))
 
     -- KB_GROUP Multimedia Keys
-        , ("<XF86AudioPlay>", spawn "tidal-cli playpause")
-        , ("<XF86AudioPrev>", spawn "tidal-cli previous")
-        , ("<XF86AudioNext>", spawn "tidal-cli next")
+        , ("<XF86AudioPlay>", spawn "music-cli playpause && media-center-notify")
+        , ("<XF86AudioPrev>", spawn "music-cli previous && media-center-notify")
+        , ("<XF86AudioNext>", spawn "music-cli next && media-center-notify")
         -- , ("<XF86AudioMute>", spawn "amixer set Master toggle") -- Mute/Unmute audio
         , ("<XF86AudioMute>", spawn "volumepactl m") -- Mute/Unmute audio
         , ("<XF86AudioLowerVolume>", spawn "volumepactl d") -- Lower audio volume
@@ -537,9 +565,10 @@ myKeys =
     -- Entire display screnshot 
 	, ("<Print>", spawn "scrot Imágenes/Screenshots/screen_%m-%d-%Y_%H-%M-%S.png -d 1 --border -u -e 'xclip -selection clipboard -t image/png -i $f'")
     -- Focused display screnshot 
-        , ("M-C-<Print>", spawn "scrot Imágenes/Screenshots/screen_%m-%d-%Y_%H-%M-%S.png -d 1--border -u -e 'xclip -selection clipboard -t image/png -i $f'")
+        , ("M-C-<Print>", spawn "scrot Imágenes/Screenshots/screen_%m-%d-%Y_%H-%M-%S.png -d 1 --border -u -e 'xclip -selection clipboard -t image/png -i $f'")
     -- Selected display screnshot 
     	, ("M-S-<Print>", spawn "scrot -s Imágenes/Screenshots/screen_%m-%d-%Y_%H-%M-%S.png -d 1 --border -e 'xclip -selection clipboard -t image/png -i $f'")
+	, ("M-S-v", spawn "rec-region")
         ]
     -- The following lines are needed for named scratchpads.
           where nonNSP          = WSIs (return (\ws -> W.tag ws /= "NSP"))
@@ -549,13 +578,16 @@ myKeys =
 main :: IO ()
 main = do
     -- Launching three instances of xmobar on their monitors.
+    -- Monitor 0: Usamos la config NORMAL (1440p)
     xmproc0 <- spawnPipe ("xmobar -x 0 $HOME/.config/xmobar/" ++ colorScheme ++ "-xmobarrc")
-    xmproc1 <- spawnPipe ("xmobar -x 1 $HOME/.config/xmobar/" ++ colorScheme ++ "-xmobarrc")
-    -- xmproc2 <- spawnPipe ("xmobar -x 2 $HOME/.config/xmobar/" ++ colorScheme ++ "-xmobarrc")
-    -- the xmonad, ya know...what the WM is named after!
+    
+    -- Agregamos "-4k" al final del string para que busque "onedark-xmobarrc-4k"
+    -- xmproc1 <- spawnPipe ("xmobar -x 1 $HOME/.config/xmobar/" ++ colorScheme ++ "-xmobarrc-4k")
+
     xmonad $ docks $ ewmh def
-        { manageHook         = myManageHook <+> manageDocks
-        -- , handleEventHook    = docksEventHook
+        { 
+	manageHook         = myManageHook <+> manageDocks
+        , handleEventHook    = onTitleChange myTitleHook
                         -- Uncomment this line to enable fullscreen support on things like YouTube/Netflix.
                         -- This works perfect on SINGLE monitor systems. On multi-monitor systems,
                         -- it adds a border around the window if screen does not have focus. So, my solution
@@ -572,8 +604,7 @@ main = do
         , logHook = dynamicLogWithPP . filterOutWsPP [scratchpadWorkspaceTag] $ xmobarPP
               -- XMOBAR SETTINGS
               { ppOutput = \x -> hPutStrLn xmproc0 x   -- xmobar on monitor 1
-                              >> hPutStrLn xmproc1 x   -- xmobar on monitor 2
-                              -- >> hPutStrLn xmproc2 x   -- xmobar on monitor 3
+                              -- >> hPutStrLn xmproc1 x   -- xmobar on monitor 2
                 -- Current workspace
               , ppCurrent = xmobarColor color04 "" . wrap "[" "]"
                 -- Visible but not current workspace

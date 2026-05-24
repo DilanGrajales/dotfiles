@@ -1,0 +1,46 @@
+#!/bin/sh
+
+# --- Configuración ---
+# Nombre del monitor interno de la laptop (basado en tu script anterior)
+INTERNAL_MONITOR="DP-4"
+
+# Resolución y refresco deseados para tu nuevo monitor externo
+EXTERNAL_MODE="2560x1440"
+EXTERNAL_RATE="75"
+
+# --- Lógica del Script ---
+
+# Pausa inicial para que el sistema tenga tiempo de detectar los monitores
+sleep 1
+
+# Buscar el nombre del primer monitor externo que esté conectado
+# (Busca cualquier monitor conectado que no sea el interno)
+EXTERNAL_MONITOR=$(xrandr --query | grep " connected" | grep -v "$INTERNAL_MONITOR" | cut -d" " -f1 | head -n 1)
+
+# Comprobar si se encontró un monitor externo
+if [ -n "$EXTERNAL_MONITOR" ]; then
+    echo "Monitor externo '$EXTERNAL_MONITOR' detectado."
+
+    # Bucle de espera: no continúa hasta que el monitor esté completamente listo
+    while ! xrandr --query | grep -q "$EXTERNAL_MONITOR connected [0-9]"; do
+        echo "Esperando a que $EXTERNAL_MONITOR esté listo..."
+        sleep 1
+    done
+
+    # Si se encontró, lo configura como primario y apaga el interno
+    echo "Configurando $EXTERNAL_MONITOR a ${EXTERNAL_MODE} @ ${EXTERNAL_RATE}Hz..."
+    xrandr --output "$EXTERNAL_MONITOR" --primary --mode $EXTERNAL_MODE --rate $EXTERNAL_RATE --output "$INTERNAL_MONITOR" --off
+
+else
+    # Si no hay monitor externo, usa solo la pantalla de la laptop
+    echo "No se detectó monitor externo. Usando la pantalla interna."
+    xrandr --output "$INTERNAL_MONITOR" --primary --auto
+    # Apaga otros puertos conocidos para asegurarse de que están desactivados
+    xrandr --output DP-0 --off --output DP-1 --off --output DP-2 --off --output DP-3 --off --output HDMI-0 --off
+fi
+
+# Pausa para que la configuración de pantalla se estabilice
+sleep 1
+
+# Configurar el fondo de pantalla
+feh --bg-fill --no-fehbg /usr/share/backgrounds/od_tux.png

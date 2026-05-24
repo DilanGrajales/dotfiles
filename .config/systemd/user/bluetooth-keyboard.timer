@@ -1,0 +1,11 @@
+[Unit]
+Description=Ejecutar el script de conexión del teclado Lofree periódicamente
+
+[Timer]
+# Se ejecuta 15 segundos después de iniciar sesión
+OnBootSec=15s
+# Se vuelve a ejecutar cada 2 minutos si el anterior falló
+OnUnitInactiveSec=2m
+
+[Install]
+WantedBy=timers.target

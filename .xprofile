@@ -1,0 +1,5 @@
+#!/bin/sh
+#xrandr --output DP-0 --mode 2560x1440 --rate 75.00
+export PATH=~/.rofi-translate:$PATH
+export __GL_SYNC_TO_VBLANK=1
+export CLUTTER_DEFAULT_FPS=75

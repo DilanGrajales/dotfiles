@@ -1,0 +1,9 @@
+[Unit]
+Description=Conectar automáticamente el teclado Lofree
+
+[Service]
+Type=oneshot
+ExecStart=/home/dilan/.local/bin/connectlofree
+
+[Install]
+WantedBy=default.target

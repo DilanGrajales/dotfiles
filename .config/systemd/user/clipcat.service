@@ -1,0 +1,24 @@
+[Unit]
+Description=Clipcat Daemon for labwc
+After=graphical-session.target
+Wants=graphical-session.target
+
+[Install]
+WantedBy=default.target
+
+[Service]
+# NOTE: We assume that your `clipcatd` is located at `/usr/bin/clipcatd`.
+ExecStartPre=/bin/rm -f %t/clipcat/grpc.sock
+ExecStart=/usr/bin/clipcatd --no-daemon --replace
+Restart=on-failure
+Type=simple
+
+➜ grep -A3 -B3 clipcat .config/labwc/autostart
+#clipman
+# wl-paste -t ​​text --watch clipman store > /dev/null 2>&1 &
+
+# clipcat
+systemctl --user start clipcat.service
+
+# Enable notifications. Typically, GNOME/KDE application notifications go
+# Use the org.freedesktop.Notifications D-Bus API and require a client such as this

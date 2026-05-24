@@ -1,0 +1,6 @@
+[Unit]
+Description=Anunciar la hora actual
+
+[Service]
+Type=oneshot
+ExecStart=/home/dilan/.local/bin/hourTelling

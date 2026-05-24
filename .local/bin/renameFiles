@@ -1,0 +1,49 @@
+#!/bin/bash
+
+# Uso: renameFiles "TEXTO_A_BUSCAR" "TEXTO_NUEVO" [DIRECTORIO]
+
+BUSCAR="$1"
+REEMPLAZO="$2"
+DIRECTORIO="${3:-.}" # Si no se pasa 3er argumento, usa el directorio actual
+
+# Verificaciones básicas
+if [ -z "$BUSCAR" ] || [ -z "$REEMPLAZO" ]; then
+    echo "Error: Faltan parámetros."
+    echo "Uso correcto: $0 'texto_a_buscar' 'texto_reemplazo'"
+    echo "Ejemplo: $0 'android-launchericon-' 'icon-'"
+    exit 1
+fi
+
+if [ ! -d "$DIRECTORIO" ]; then
+    echo "Error: El directorio '$DIRECTORIO' no existe."
+    exit 1
+fi
+
+cd "$DIRECTORIO" || exit
+
+echo "Reemplazando '$BUSCAR' por '$REEMPLAZO' en '$DIRECTORIO'..."
+
+COUNT=0
+
+# Iteramos sobre todos los archivos que contengan el texto a buscar
+# Usamos "*" para que encuentre cualquier cosa que tenga ese patrón
+for archivo in *"$BUSCAR"*; do
+    if [ -f "$archivo" ]; then
+        # Aquí ocurre la magia: ${variable//buscar/reemplazar}
+        # Esto reemplaza todas las apariciones del texto
+        nuevo_nombre="${archivo//$BUSCAR/$REEMPLAZO}"
+        
+        if [ "$archivo" != "$nuevo_nombre" ]; then
+            # -n evita sobrescribir si ya existe el destino
+            mv -n "$archivo" "$nuevo_nombre"
+            echo "✅ $archivo -> $nuevo_nombre"
+            ((COUNT++))
+        fi
+    fi
+done
+
+if [ $COUNT -eq 0 ]; then
+    echo "No se encontraron archivos que contengan '$BUSCAR'."
+else
+    echo "¡Listo! Se renombraron $COUNT archivos."
+fi

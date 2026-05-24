@@ -1,0 +1,14 @@
+#!/bin/bash
+
+# 1. Captura la entrada con Rofi
+QUERY=$(rofi -dmenu -p "Pregunta a Gemini:" -theme-str 'window {width: 40%;}')
+
+if [ -n "$QUERY" ]; then
+    # 2. Llama al binario de Go y guarda la respuesta
+    RESPONSE=$(gemini-cli "$QUERY")
+
+    # 3. Muestra el resultado en una ventana de Rofi (modo lectura)
+    # También lo copia al portapapeles automáticamente
+    echo "$RESPONSE" | xclip -selection clipboard
+    echo "$RESPONSE" | rofi -dmenu -p "Respuesta (Copiada):" -theme-str 'window {width: 60%;} listview {lines: 15;}'
+fi

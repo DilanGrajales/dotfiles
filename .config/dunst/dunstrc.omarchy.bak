@@ -1,0 +1,137 @@
+[global]
+    # --- Geometría y Fuente ---
+    width = 300
+    height = 100
+    origin = top-right
+    offset = 20x20
+    font = SF Pro Display 10
+
+    # --- Apariencia General (One Dark) ---
+    # Transparencia (requiere compositor como hyprland/picom)
+    transparency = 10
+    # Espaciado
+    padding = 16
+    horizontal_padding = 16
+    text_icon_padding = 16
+    frame_width = 1
+    # Color del borde (One Dark amarillo)
+    frame_color = "#e5c07b"
+    separator_color = frame
+
+    # --- Icons ---
+
+    # Align icons left/right/off
+    icon_position = left
+
+    # Scale small icons up to this size, set to 0 to disable. Helpful
+    # for e.g. small files or high-dpi screens. In case of conflict,
+    # max_icon_size takes precedence over this.
+    min_icon_size = 0
+
+    # Scale larger icons down to this size, set to 0 to disable
+    max_icon_size = 40
+
+    # Paths to default icons.
+    icon_path = /home/${USER}/.local/share/icons/dunst
+
+    # --- Iconos y Progreso ---
+    icon_position = left
+    min_icon_size = 48
+    max_icon_size = 64
+    # Esto habilita la barra de progreso (útil para volumen/brillo)
+    progress_bar = true
+    progress_bar_height = 8
+    progress_bar_frame_width = 1
+    progress_bar_min_width = 150
+    progress_bar_max_width = 300
+
+    # Formato de la notificación; Variables disponibles:
+    #   %a  appname
+    #   %s  summary (título)
+    #   %b  body (contenido)
+    #   %i  iconname (including its path
+    #   %I  iconname (without its path)
+    #   %p  progress value if set ([  0%] to [100%]) or nothing
+    #   %n  progress value if set without any extra characters
+    #   %%  Literal %
+    # Markup is allowed
+    format = "%s %p\n%b"
+
+    # --- Comportamiento ---
+    sort = yes
+    idle_threshold = 120
+    line_height = 0
+    markup = full
+    show_age_threshold = 60
+    ellipsize = middle
+    ignore_newline = no
+    stack_duplicates = true
+    hide_duplicate_count = false
+    show_indicators = yes
+    sticky_history = yes
+    history_length = 20
+    browser = /usr/bin/xdg-open
+    always_run_script = true
+    title = Dunst
+    class = Dunst
+    corner_radius = 10
+    mouse_left_click = do_action, close_current
+    mouse_middle_click = close_all
+    mouse_right_click = close_current
+
+    # Animation settings
+    frame_animate = yes
+    slide_in_duration = 200
+    slide_out_duration = 200
+    fade_in_duration = 200
+    fade_out_duration = 200
+
+# --- COLORES ONE DARK ---
+
+[urgency_low]
+    # One Dark grisaceo
+    background = "#282c34"
+    foreground = "#abb2bf"
+    frame_color = "#98c379" # Green
+    timeout = 4
+
+[urgency_normal]
+    # One Dark fondo estándar
+    background = "#282c34"
+    foreground = "#abb2bf"
+    frame_color = "#e5c07b" # Yellow
+    timeout = 6
+
+[urgency_critical]
+    # One Dark fondo rojizo/alerta
+    background = "#282c34"
+    foreground = "#e06c75" # Red
+    frame_color = "#e06c75"
+    timeout = 0
+
+# --- REGLAS ESPECÍFICAS (Volumen y Música) ---
+
+# Para que las notificaciones de volumen (enviadas por scripts) no se acumulen
+[volume]
+    appname = "changeVolume"
+    history_ignore = yes
+    urgency = low
+    timeout = 2
+
+# --- REGLA ESPECÍFICA (Música Centrada) ---
+[media-center]
+    # Nombre de aplicación para activar esta regla
+    appname = "media-center-notify"
+    # Posición: Centro horizontal, arriba (top) o abajo (bottom)
+    origin = center
+    # Offset: 0px horizontal, 200px vertical. Ajusta 200 para moverlo más abajo.
+    offset = 0x200
+    # Duración corta
+    timeout = 3
+    # No apilar en el historial
+    history_ignore = yes
+    
+    # Apariencia One Dark
+    background = "#282c34"
+    foreground = "#abb2bf"
+    frame_color = "#e5c07b" # Amarillo One Dark para el borde

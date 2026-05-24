@@ -45,7 +45,7 @@ Si ya tienes archivos previos, haz un respaldo antes de sobrescribirlos.
 
 ### Instala dependencias adicionales
 
-- Instala fuentes recomendadas (ejemplo: `otf-apple-fonts`, `nerd-fonts-sf-mono-ligatures` `ttf-font-awesome`).
+- Instala fuentes recomendadas (ejemplo: `otf-apple-fonts`, `nerd-fonts-sf-mono-ligatures` `ttf-font-awesome` `noto-fonts-emoji` ).
 - Instala otros programas que uses en tu configuración (`feh`, `rofi`, `tidal`, `emacs`, etc).
 
 ### Inicia XMonad

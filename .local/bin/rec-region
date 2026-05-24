@@ -1,0 +1,50 @@
+#!/usr/bin/env bash
+
+# Archivo para guardar el PID y saber si estamos grabando
+PIDFILE="/tmp/recording_pid"
+OUTPUT="$HOME/Vídeos/Screencasts/clip_$(date +%Y-%m-%d_%H-%M-%S).mp4"
+
+# Asegurar directorio
+mkdir -p "$HOME/Vídeos/Screencasts"
+
+if [ -f "$PIDFILE" ]; then
+    # --- DETENER GRABACIÓN ---
+    PID=$(cat "$PIDFILE")
+    # Enviar señal de terminación suave a ffmpeg
+    kill -SIGINT "$PID"
+    rm "$PIDFILE"
+    
+    # Notificación final (usando tu dunst minimalista)
+    notify-send -a "ScreenRecorder" -u low "Clip Guardado" "En ~/Vídeos/Screencasts"
+else
+    # --- INICIAR GRABACIÓN ---
+    
+    # 1. Usar slop para seleccionar área. 
+    # -f define el formato de salida: x, y, width, height, g (geometría completa)
+    read -r X Y W H G < <(slop -f "%x %y %w %h %g")
+
+    # Si el usuario cancela con ESC, slop no devuelve nada
+    if [ -z "$G" ]; then
+        exit 1
+    fi
+
+    # Notificación de inicio
+    notify-send -a "ScreenRecorder" -t 2000 "Grabando Clip..." "Presiona el atajo de nuevo para detener."
+
+    # 2. Iniciar FFmpeg con aceleración NVIDIA (h264_nvenc)
+    # -framerate 60: Fluidez total
+    # -video_size y -i: Usan las coordenadas de slop
+    # -c:v h264_nvenc: USA TU RTX A2000 (0% carga de CPU)
+    # -cq 19: Calidad constante (menor número = mejor calidad)
+    
+    ffmpeg \
+        -f x11grab \
+        -framerate 60 \
+        -video_size "${W}x${H}" \
+        -i ":0.0+${X},${Y}" \
+        -c:v h264_nvenc -cq 19 -preset p4 \
+        -y "$OUTPUT" &>/dev/null &
+
+    # Guardar el PID del proceso en segundo plano
+    echo $! > "$PIDFILE"
+fi

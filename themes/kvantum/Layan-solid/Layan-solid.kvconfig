@@ -73,13 +73,13 @@ click_behavior=0
 shadowless_popup=false
 
 [GeneralColors]
-window.color=#282c34
-base.color=#282c34
-alt.base.color=#282c34
+window.color=#141414
+base.color=#141414
+alt.base.color=#141414
 button.color=#44454B
 light.color=#44454B
 mid.light.color=#44454B
-dark.color=#282c34
+dark.color=#141414
 mid.color=#44454B
 highlight.color=#e5c07b
 inactive.highlight.color=#e5c07b

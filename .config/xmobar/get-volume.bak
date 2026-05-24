@@ -1,0 +1,9 @@
+#!/bin/bash
+is_muted=$(pactl get-sink-mute @DEFAULT_SINK@ | grep -q 'yes' && echo "true")
+volume=$(pactl get-sink-volume @DEFAULT_SINK@ | grep -Po '\d+(?=%)' | head -1)
+
+if [[ "$is_muted" == "true" ]]; then
+    echo -e "<fc=#e06c75><fn=2>\xf026</fn></fc> MUTE"
+else
+    echo -e "<fc=#abb2bf><fn=2>\xf028</fn></fc> ${volume}%"
+fi

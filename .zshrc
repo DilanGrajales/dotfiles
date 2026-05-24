@@ -19,27 +19,36 @@ fi
 source /usr/share/zsh-theme-powerlevel10k/powerlevel10k.zsh-theme
 
 # Plugins
-source /usr/share/zsh-sudo/sudo.plugin.zsh
+source /usr/share/zsh/plugins/zsh-sudo/sudo.plugin.zsh
 
 # Alias
-alias run="python manage.py runserver"
+#alias run="python manage.py runserver"
+#alias tracking="cd /home/dilan/Documentos/Projects/tracking-crm && source env/bin/activate && export GOOGLE_APPLICATION_CREDENTIALS=google-key.json"
+#alias microimport="cd /home/Microanalisis/microimport"
+#alias cenpos="cd /home/dilan/Documentos/Projects/app.cenpos && source env/bin/activate"
+#alias cadena="cd /home/Microanalisis/coc"
+#alias iluminacion="cd /home/Microanalisis/iluminacion"
+#alias secret="python ~/secretKeysGen.py"
+alias evol="cd /home/${USER}/Documentos/Projects/evol-project"
 alias icat="kitten icat"
 alias venv="source env/bin/activate"
 alias ssdhealth="sudo smartctl -A /dev/nvme0n1"
-
+alias fan="sudo modprobe -r thinkpad_acpi && sudo modprobe thinkpad_acpi fan_control=1"
+alias ls="lsd -a"
+alias tsx-lines='fd -e tsx -E node_modules -X wc -l | sort -rn | head -20'
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
 # nvm
-source /usr/share/nvm/init-nvm.sh
+# source /usr/share/nvm/init-nvm.sh
 autoload -U add-zsh-hook
 
 # Tyy colors
-source /home/${USER}/.config/tty/one-dark-tty.sh
+source /home/dilan/.config/tty/one-dark-tty.sh
 
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+# export NVM_DIR="$HOME/.nvm"
+# [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 
 load-nvmrc() {
   local nvmrc_path
@@ -60,10 +69,35 @@ load-nvmrc() {
   fi
 }
 
-add-zsh-hook chpwd load-nvmrc
+# Limpia node_modules recursivamente EXCEPTO el proyecto especificado
+clean-node() {
+  local exception=$1
+  
+  if [ -z "$exception" ]; then
+    echo "⚠️  Atención: No se especificó excepción. Se eliminarán TODOS los node_modules en $PWD."
+    echo -n "¿Estás seguro? (s/n): "
+    read -r confirm
+    if [[ ! $confirm =~ ^[Ss]$ ]]; then
+      echo "Operación cancelada."
+      return 1
+    fi
+    
+    echo "Buscando y eliminando todos los node_modules..."
+    find . -name "node_modules" -type d -prune -exec rm -rf {} +
+  else
+    echo "Buscando node_modules en $PWD (ignorando $exception)..."
+    # Buscamos, filtramos la ruta de la excepción y borramos el resto
+    find . -name "node_modules" -type d -prune | grep -v "/$exception/" | xargs -I {} rm -rf "{}"
+  fi
+
+  echo "✅ Proceso finalizado."
+}
+
+# add-zsh-hook chpwd load-nvmrc
+# load-nvmrc
 
 # pnpm
-export PNPM_HOME="/home/${USER}/.local/share/pnpm"
+export PNPM_HOME="/home/dilan/.local/share/pnpm"
 case ":$PATH:" in
   *":$PNPM_HOME:"*) ;;
   *) export PATH="$PNPM_HOME:$PATH" ;;
@@ -81,3 +115,9 @@ xcat() {
     fi
 }
 
+## [Completion]
+## Completion scripts setup. Remove the following line to uninstall
+[[ -f /home/dilan/.dart-cli-completion/zsh-config.zsh ]] && . /home/dilan/.dart-cli-completion/zsh-config.zsh || true
+## [/Completion]
+
+export PATH="$HOME/.npm-global/bin:$PATH"

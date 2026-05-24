@@ -1,0 +1,22 @@
+#!/bin/sh
+
+# Comprueba si el monitor DP-0 está conectado
+if xrandr --query | grep -q "DP-0.8 connected"; then
+    # Si está conectado, apaga la pantalla de la laptop y usa solo el monitor externo.
+    xrandr --output DP-4 --off \
+           --output DP-0.8 --primary --mode 2560x1440 -r 75 --pos 0x0 --rotate normal \
+           --output HDMI-0 --off \
+           --output DP-1 --off \
+           --output DP-2 --off \
+           --output DP-3 --off
+else
+    # Si no está conectado, usa solo la pantalla de la laptop y apaga las demás.
+    xrandr --output DP-4 --primary --auto \
+           --output DP-0.8 --off \
+           --output HDMI-0 --off \
+           --output DP-1 --off \
+           --output DP-2 --off \
+           --output DP-3 --off
+fi
+
+feh --bg-fill --no-fehbg /usr/share/backgrounds/od_tux.png

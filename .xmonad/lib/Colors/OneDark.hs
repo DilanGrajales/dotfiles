@@ -4,10 +4,10 @@ import XMonad
 
 colorScheme = "onedark"
 
-colorBack = "#282c34"  -- fondo principal
+colorBack = "#141414"  -- fondo principal
 colorFore = "#abb2bf"  -- texto principal
 
-color01 = "#282c34"  -- fondo
+color01 = "#141414"  -- fondo
 color02 = "#e06c75"  -- rojo
 color03 = "#98c379"  -- verde
 color04 = "#e5c07b"  -- amarillo
@@ -26,4 +26,4 @@ color15 = "#56b6c2"  -- cian brillante
 color16 = "#ffffff"  -- blanco puro
 
 colorTrayer :: String
-colorTrayer = "--tint 0x282c34"
+colorTrayer = "--tint 0x141414"

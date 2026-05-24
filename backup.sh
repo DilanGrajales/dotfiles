@@ -173,6 +173,7 @@ EOF
 cleanup() {
   echo "Limpiando basura del repo..."
   rm -f "$DOTFILES/.zhistory" "$DOTFILES/.zsh_history" 2>/dev/null || true
+  find "$DOTFILES" -name '*zsh_history*' -o -name '*history*' | grep -v '.gitignore' | xargs rm -f 2>/dev/null || true
   find "$DOTFILES/.xmonad" -name '*.bak' -delete 2>/dev/null || true
   find "$DOTFILES/.config" -name '*.bak' -delete 2>/dev/null || true
 }

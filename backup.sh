@@ -37,7 +37,9 @@ backup_xmonad() {
 
 backup_scripts() {
   echo "[5/10] Scripts en .local/bin/..."
-  rsync -a --delete "$HOME/.local/bin/" "$DOTFILES/.local/bin/"
+  rsync -a --delete \
+    --exclude='hi-fi-pipewire' \
+    "$HOME/.local/bin/" "$DOTFILES/.local/bin/"
 }
 
 backup_rofi() {
@@ -59,13 +61,18 @@ backup_packages() {
 
 backup_system() {
   echo "[9/10] Configuraciones de sistema (sudo)..."
-  sudo mkdir -p "$DOTFILES/etc"
-  sudo cp /etc/default/grub "$DOTFILES/etc/grub"
-  sudo cp /etc/fstab "$DOTFILES/etc/fstab"
-  sudo cp /etc/pacman.conf "$DOTFILES/etc/pacman.conf"
-  sudo chown -R "$USER:$USER" "$DOTFILES/etc"
-  sudo rsync -a --delete /usr/share/grub/themes/thinkpad/ "$DOTFILES/grub/themes/thinkpad/"
-  sudo chown -R "$USER:$USER" "$DOTFILES/grub"
+  if sudo -n true 2>/dev/null; then
+    sudo mkdir -p "$DOTFILES/etc"
+    sudo cp /etc/default/grub "$DOTFILES/etc/grub"
+    sudo cp /etc/fstab "$DOTFILES/etc/fstab"
+    sudo cp /etc/pacman.conf "$DOTFILES/etc/pacman.conf"
+    sudo chown -R "$USER:$USER" "$DOTFILES/etc"
+    sudo rsync -a --delete /usr/share/grub/themes/thinkpad/ "$DOTFILES/grub/themes/thinkpad/"
+    sudo chown -R "$USER:$USER" "$DOTFILES/grub"
+  else
+    echo "  SKIP: sudo requiere password. Ejecuta manual:"
+    echo "    backup_system() { ... }"
+  fi
 }
 
 update_themes_readme() {
